@@ -84,24 +84,24 @@ public class ChatActivity extends AppCompatActivity {
 
 
         send_btn = findViewById(R.id.btn_send);
+
         username1 = findViewById(R.id.username_chat);
 
         intent = getIntent();
 
-        final String user_name=intent.getStringExtra("username");
+        final String recipient=intent.getStringExtra("username");
 
-        username1.setText(user_name);
+        username1.setText(recipient);
 
         send_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    volley_send(v,user_name);
+                    volley_send(v,recipient);
                     send_text.setText("");
             }
         });
 
     }
-
 
 
     private void getMessage(String sender,String receiver){
@@ -112,7 +112,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-    public void volley_send(View v,String username){
+    public void volley_send(View v,String recipient){
         String url="http://palaver.se.paluno.uni-due.de/api/message/send";
         send_text = findViewById(R.id.text_send);
 
@@ -129,7 +129,7 @@ public class ChatActivity extends AppCompatActivity {
             HashMap<String,String> map=new HashMap<>();
             map.put("Username",user);
             map.put("Password",pass);
-            map.put("Recipient",username);
+            map.put("Recipient",recipient);
             map.put("Mimetype","text/plain");
             map.put("Data",send_text.getText().toString());
 
