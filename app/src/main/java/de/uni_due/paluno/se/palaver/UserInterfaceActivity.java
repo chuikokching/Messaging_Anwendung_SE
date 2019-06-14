@@ -16,19 +16,19 @@ import de.uni_due.paluno.se.palaver.fragment.Fragment_setting;
 
 public class UserInterfaceActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Fragment frag_chat;
+   // private Fragment frag_chat;
     private Fragment frag_list;
     private Fragment frag_setting;
 
-    private LinearLayout linear_chat;
+    //private LinearLayout linear_chat;
     private LinearLayout linear_list;
     private LinearLayout linear_setting;
 
-    private ImageView image_chat;
+   // private ImageView image_chat;
     private ImageView image_list;
     private ImageView image_setting;
 
-    private TextView tv_chat;
+  //  private TextView tv_chat;
     private TextView tv_list;
     private TextView tv_setting;
 
@@ -45,25 +45,25 @@ public class UserInterfaceActivity extends AppCompatActivity implements View.OnC
         InitEvent();
 
         //Fragment
-        InitFragment(1);
+        InitFragment(2);
 
         //default situation
-        image_chat.setImageResource(R.drawable.wechat_select);
-        tv_chat.setTextColor(getResources().getColor(R.color.colorAccent));
+        image_list.setImageResource(R.drawable.me_select);
+        tv_list.setTextColor(getResources().getColor(R.color.colorAccent));
     }
 
 
     public void InitView()
     {
-        linear_chat = (LinearLayout) findViewById(R.id.line2);
+       // linear_chat = (LinearLayout) findViewById(R.id.line2);
         linear_list = (LinearLayout) findViewById(R.id.line3);
         linear_setting = (LinearLayout) findViewById(R.id.line1);
 
-        image_chat = (ImageView) findViewById(R.id.ic_2);
+       // image_chat = (ImageView) findViewById(R.id.ic_2);
         image_list = (ImageView) findViewById(R.id.ic_3);
         image_setting= (ImageView) findViewById(R.id.ic_1);
 
-        tv_chat = (TextView) findViewById(R.id.textview_2);
+       // tv_chat = (TextView) findViewById(R.id.textview_2);
         tv_list = (TextView) findViewById(R.id.textview_3);
         tv_setting = (TextView) findViewById(R.id.textview_1);
     }
@@ -78,15 +78,15 @@ public class UserInterfaceActivity extends AppCompatActivity implements View.OnC
         //hide all Fragment
         hideAllFragment(transaction);
         switch (index){
-            case 1:
-                if (frag_chat == null){
-                    frag_chat = new Fragment_chat();
-                    transaction.add(R.id.frame_content,frag_chat);
-                }
-                else{
-                    transaction.show(frag_chat);
-                }
-                break;
+//            case 1:
+//                if (frag_chat == null){
+//                    frag_chat = new Fragment_chat();
+//                    transaction.add(R.id.frame_content,frag_chat);
+//                }
+//                else{
+//                    transaction.show(frag_chat);
+//                }
+//                break;
 
             case 2:
                 if (frag_list == null){
@@ -115,7 +115,7 @@ public class UserInterfaceActivity extends AppCompatActivity implements View.OnC
 
     private void InitEvent(){
         //Listener
-        linear_chat.setOnClickListener(this);
+        //linear_chat.setOnClickListener(this);
         linear_list.setOnClickListener(this);
         linear_setting.setOnClickListener(this);
     }
@@ -127,12 +127,12 @@ public class UserInterfaceActivity extends AppCompatActivity implements View.OnC
         restartButton();
 
         switch (view.getId()){
-            case R.id.line2:
-
-                image_chat.setImageResource(R.drawable.wechat_select);
-                tv_chat.setTextColor(getResources().getColor(R.color.colorgreen));
-                InitFragment(1);
-                break;
+//            case R.id.line2:
+//
+//                image_chat.setImageResource(R.drawable.wechat_select);
+//                tv_chat.setTextColor(getResources().getColor(R.color.colorgreen));
+//                InitFragment(1);
+//                break;
 
             case R.id.line3:
                 image_list.setImageResource(R.drawable.me_select);
@@ -150,9 +150,9 @@ public class UserInterfaceActivity extends AppCompatActivity implements View.OnC
 
     //HideAllfragment
     private void hideAllFragment(android.support.v4.app.FragmentTransaction transaction){
-        if (frag_chat != null){
-            transaction.hide(frag_chat);
-        }
+//        if (frag_chat != null){
+//            transaction.hide(frag_chat);
+//        }
 
         if (frag_list != null){
             transaction.hide(frag_list);
@@ -167,11 +167,11 @@ public class UserInterfaceActivity extends AppCompatActivity implements View.OnC
     private void restartButton(){
 
         image_setting.setImageResource(R.drawable.find_normal);
-        image_chat.setImageResource(R.drawable.wechat_normal);
+        //image_chat.setImageResource(R.drawable.wechat_normal);
         image_list.setImageResource(R.drawable.me_normal);
 
         //grey
-        tv_chat.setTextColor(getResources().getColor(R.color.colorgrey));
+       // tv_chat.setTextColor(getResources().getColor(R.color.colorgrey));
         tv_setting.setTextColor(getResources().getColor(R.color.colorgrey));
         tv_list.setTextColor(getResources().getColor(R.color.colorgrey));
     }

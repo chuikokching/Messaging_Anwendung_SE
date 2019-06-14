@@ -6,7 +6,7 @@
     android:background="@drawable/title_tab">
 
 
-
+   <!--
     <LinearLayout
         android:id="@+id/line2"
         android:orientation="vertical"
@@ -28,7 +28,7 @@
             android:textSize="11dp"
             android:textColor="@android:color/black"
             android:text="Chat"/>
-    </LinearLayout>
+    </LinearLayout>-->
 
     <LinearLayout
         android:id="@+id/line3"
