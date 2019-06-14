@@ -10,9 +10,9 @@ import java.util.Map;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
-    @Override public void onMessageReceived(RemoteMessage message){
+    @Override public void onMessageReceived(RemoteMessage message)
+    {
         //broadcast
-
 
         String from = message.getFrom();
 
@@ -20,5 +20,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Intent i = new Intent("de.uni_due.paluno.se.palaver.message." + data.get("whatever-key"));
 
-        sendBroadcast(i); }
+        sendBroadcast(i);
+    }
 }

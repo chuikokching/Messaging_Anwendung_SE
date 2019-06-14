@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -15,6 +17,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
 import de.uni_due.paluno.se.palaver.R;
 
 import org.json.JSONException;
@@ -23,6 +30,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     SharedPreferences speicher;
     SharedPreferences.Editor speicher_Editor;
@@ -77,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         VolleyClass.getHttpQueues().cancelAll("Login_Request");
+        VolleyClass.getHttpQueues().cancelAll("PushToken_Request");
     }
 
 
@@ -122,12 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
                                                 autoLogin(name,pass);
 
-                                                handler.postDelayed(new Runnable() {
-                                                    public void run() {
-                                                        Intent test2 =new Intent(MainActivity.this, UserInterfaceActivity.class);
-                                                        startActivity(test2);
-                                                        MainActivity.this.finish();
-                                                    }}, 3000); }
+                                                getToken();
+
+                                            }
                                             else
                                             {
 
@@ -158,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
     }
     
 
-
     private void autoLogin(String name,String pass){
 
         speicher_Editor.putBoolean("login",true);
@@ -168,6 +174,92 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void getToken(){
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    Log.d(TAG, "getInstanceId failed", task.getException());
+                    return;
+                }
+
+                // let new Instance ID token
+                String token = task.getResult().getToken();
+
+                // Log and toast
+                String msg = R.string.msg_token_fmt+token;
+
+                Log.d(TAG, token);
+
+                //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+                System.out.println(msg + " test in console!!!!!!!!!!");
+
+                pushToken(token);
+            }
+        });
+    }
+
+    public void pushToken(String token){
+        String url="http://palaver.se.paluno.uni-due.de/api/user/pushtoken";
+        String name=speicher.getString("username",null);
+        String pass=speicher.getString("password",null);
+
+
+        HashMap<String,String> map=new HashMap<>();
+        map.put("Username",name);
+        map.put("Password",pass);
+        map.put("PushToken",token);
+
+
+        JSONObject jsonObject=new JSONObject(map);
+        JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            String number= response.getString("MsgType");
+                            String info = response.getString("Info");
+                            if(number.equals("1"))
+                            {
+
+                                //Toast.makeText(getApplicationContext(),info,Toast.LENGTH_SHORT).show();
+
+                                handler.postDelayed(new Runnable() {
+                                    public void run() {
+                                        Intent test2 =new Intent(MainActivity.this, UserInterfaceActivity.class);
+                                        startActivity(test2);
+                                        MainActivity.this.finish();
+                                    }}, 3000); }
+                            else
+                            {
+                                Toast.makeText(getApplicationContext(),"PushToken isn't successful!",Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        System.out.println("Output from Error: "+ error.toString());
+                        Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+
+                    }
+                });
+        jsonArrayReq.setTag("Pushtoken_Request");
+        VolleyClass.getHttpQueues().add(jsonArrayReq);
+
+    }
 
     /*protected void onStart(){
         super.onStart();

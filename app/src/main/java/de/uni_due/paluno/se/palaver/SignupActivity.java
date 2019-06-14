@@ -60,7 +60,7 @@ public class SignupActivity extends AppCompatActivity {
             map.put("Username",Text1.getText().toString());
             map.put("Password",Text2.getText().toString());
 
-            System.out.println(Text1.getText().toString()+" "+Text2.getText().toString()+" "+ Text3.getText().toString());
+            //System.out.println(Text1.getText().toString()+" "+Text2.getText().toString()+" "+ Text3.getText().toString());
             JSONObject jsonObject=new JSONObject(map);
             JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
                     Request.Method.POST,
