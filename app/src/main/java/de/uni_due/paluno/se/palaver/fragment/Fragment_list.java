@@ -2,6 +2,8 @@ package de.uni_due.paluno.se.palaver.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +18,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import de.uni_due.paluno.se.palaver.Datenbank.DBManager;
+import de.uni_due.paluno.se.palaver.Datenbank.MysqliteHelper;
 import de.uni_due.paluno.se.palaver.VolleyClass;
 import de.uni_due.paluno.se.palaver.Adapter.UserAdapter;
 import de.uni_due.paluno.se.palaver.R;
@@ -30,8 +34,9 @@ import java.util.List;
 public class Fragment_list extends Fragment {
 
     private UserAdapter user;
-    private List<String> mlist;
+    private List<String> friend_list;
 
+    private MysqliteHelper helper;
 
     public RecyclerView mCollectRecyclerView;
 
@@ -43,25 +48,26 @@ public class Fragment_list extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-         //volley_getFriendslist();
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         mCollectRecyclerView = view.findViewById(R.id.collect_recyclerView);
         mCollectRecyclerView.setHasFixedSize(true);
         mCollectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mlist= new ArrayList<>();
+        helper = DBManager.getInstance(this.getContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
 
+        friend_list= new ArrayList<>();
+        //volley_getFriendslist();
         addUser();
 
         return view;
     }
 
     public void addUser(){
-        mlist.add("chuikokching");
-        mlist.add("jeff");
-        mlist.add("gogogogogogo");
-        user= new UserAdapter(getContext(),mlist);
+        friend_list.add("chuikokching");
+        friend_list.add("jeff");
+        friend_list.add("gogogogogogo");
+        user= new UserAdapter(getContext(),friend_list);
         mCollectRecyclerView.setAdapter(user);
 
     }
