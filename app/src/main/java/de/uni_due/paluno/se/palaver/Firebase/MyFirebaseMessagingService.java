@@ -70,6 +70,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-        //sendBroadcast(i);
-
 }

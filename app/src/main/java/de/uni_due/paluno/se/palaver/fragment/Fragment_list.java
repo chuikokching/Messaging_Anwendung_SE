@@ -78,7 +78,7 @@ public class Fragment_list extends Fragment {
         friend_list.add("test123126");
         friend_list.add("chuikokching");
         friend_list.add("jeff");
-        friend_list.add("gogogogogogo");
+        friend_list.add("guenes");
         user= new UserAdapter(getContext(),friend_list);
         mCollectRecyclerView.setAdapter(user);
 
