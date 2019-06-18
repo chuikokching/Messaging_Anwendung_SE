@@ -97,8 +97,6 @@ public class Fragment_setting extends Fragment {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        //Log.i("Output from server: ", response.toString());
-                        //System.out.println("Output from server: "+ response.toString());
 
                         try {
                             String number= response.getString("MsgType");

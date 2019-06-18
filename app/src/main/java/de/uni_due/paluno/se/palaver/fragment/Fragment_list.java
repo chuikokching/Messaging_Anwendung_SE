@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import de.uni_due.paluno.se.palaver.VolleyClass;
 import de.uni_due.paluno.se.palaver.Adapter.UserAdapter;
 import de.uni_due.paluno.se.palaver.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,31 +59,28 @@ public class Fragment_list extends Fragment {
         speicher_fragment = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
         speicher_editor = speicher_fragment.edit();
 
+        friend_list = new ArrayList<>();
         String user = speicher_fragment.getString("username", "");
 
         Constant.setUserName(user);
 
+        volley_getFriendslist();
 
         helper = DBManager.getInstance(this.getContext());
+
         SQLiteDatabase db = helper.getWritableDatabase();
 
         db.close();
 
-        friend_list= new ArrayList<>();
-        //volley_getFriendslist();
-        addUser();
+
 
         return view;
     }
 
     public void addUser(){
-        friend_list.add("test123126");
-        friend_list.add("chuikokching");
-        friend_list.add("jeff");
-        friend_list.add("guenes");
+
         user= new UserAdapter(getContext(),friend_list);
         mCollectRecyclerView.setAdapter(user);
-
     }
 
     public void volley_getFriendslist()
@@ -89,7 +88,6 @@ public class Fragment_list extends Fragment {
 
         String user = speicher_fragment.getString("username", "");
         String pass = speicher_fragment.getString("password", "");
-        String data="";
 
         String url="http://palaver.se.paluno.uni-due.de/api/friends/get";
 
@@ -112,10 +110,15 @@ public class Fragment_list extends Fragment {
                         try {
                             String number= response.getString("MsgType");
                             String info = response.getString("Info");
-                            String data = response.getString("Data");
+                            JSONArray data = response.getJSONArray("Data");
 
                             if(number.equals("1")) {
 
+                                for (int i=1; i<data.length(); i++){
+                                     //Log.i("tag",data.getString(i));
+                                    friend_list.add(data.getString(i));
+                                }
+                                addUser();
                                 Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
 
@@ -142,7 +145,6 @@ public class Fragment_list extends Fragment {
                 });
         jsonArrayReq.setTag("getfriendlist_Request");
         VolleyClass.getHttpQueues().add(jsonArrayReq);
-
     }
 
     @Override
@@ -150,4 +152,17 @@ public class Fragment_list extends Fragment {
         super.onStop();
         VolleyClass.getHttpQueues().cancelAll("getfriendlist_Request");
     }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {   // not displayed onPause();
+            Log.i("tag","-----OnHidden-------");
+
+        }else{  // displayed onResume();
+
+            //volley_getFriendslist();
+        }
+    }
+
 }

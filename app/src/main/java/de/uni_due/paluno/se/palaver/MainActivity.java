@@ -190,13 +190,13 @@ public class MainActivity extends AppCompatActivity {
                 String token = task.getResult().getToken();
 
                 // Log and toast
-                String msg = R.string.msg_token_fmt+token;
+                //String msg = R.string.msg_token_fmt+token;
 
                 Log.d(TAG, token);
 
-                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
 
-                System.out.println(msg + " test in console!!!!!!!!!!");
+                //System.out.println(msg + " test in console!!!!!!!!!!");
 
                 //pushToken(token);
                 String url="http://palaver.se.paluno.uni-due.de/api/user/pushtoken";
@@ -218,15 +218,12 @@ public class MainActivity extends AppCompatActivity {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-
                                 try {
                                     String number= response.getString("MsgType");
                                     String info = response.getString("Info");
                                     if(number.equals("1"))
                                     {
-
-                                        Toast.makeText(getApplicationContext(),info,Toast.LENGTH_SHORT).show();
-
+                                        //Toast.makeText(getApplicationContext(),info,Toast.LENGTH_SHORT).show();
                                         handler.postDelayed(new Runnable() {
                                             public void run() {
                                                 Intent test2 =new Intent(MainActivity.this, UserInterfaceActivity.class);
@@ -259,65 +256,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void pushToken(String token){
-        String url="http://palaver.se.paluno.uni-due.de/api/user/pushtoken";
-        String name=speicher.getString("username",null);
-        String pass=speicher.getString("password",null);
-
-
-        HashMap<String,String> map=new HashMap<>();
-        map.put("Username",name);
-        map.put("Password",pass);
-        map.put("PushToken",token);
-
-
-        JSONObject jsonObject=new JSONObject(map);
-        JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
-                Request.Method.POST,
-                url,
-                jsonObject,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-                            String number= response.getString("MsgType");
-                            String info = response.getString("Info");
-                            if(number.equals("1"))
-                            {
-
-                                Toast.makeText(getApplicationContext(),info,Toast.LENGTH_SHORT).show();
-
-                                handler.postDelayed(new Runnable() {
-                                    public void run() {
-                                        Intent test2 =new Intent(MainActivity.this, UserInterfaceActivity.class);
-                                        startActivity(test2);
-                                        MainActivity.this.finish();
-                                    }}, 3000); }
-                            else
-                            {
-                                Toast.makeText(getApplicationContext(),"PushToken isn't successful!",Toast.LENGTH_SHORT).show();
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //VolleyLog.d(TAG, "Error: " + error.getMessage());
-                        System.out.println("Output from Error: "+ error.toString());
-                        Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
-
-                    }
-                });
-        jsonArrayReq.setTag("Pushtoken_Request");
-        VolleyClass.getHttpQueues().add(jsonArrayReq);
-
-    }
 
     /*protected void onStart(){
         super.onStart();

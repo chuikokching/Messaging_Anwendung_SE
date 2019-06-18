@@ -40,7 +40,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         createNotificationChannel();
 
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "id")
                 .setSmallIcon(R.drawable.star)
                 .setContentTitle("Text from palaver")
