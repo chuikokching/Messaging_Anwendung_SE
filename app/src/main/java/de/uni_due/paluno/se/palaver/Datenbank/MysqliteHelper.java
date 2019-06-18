@@ -1,15 +1,27 @@
 package de.uni_due.paluno.se.palaver.Datenbank;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import static android.app.PendingIntent.getActivity;
+
 public class MysqliteHelper extends SQLiteOpenHelper {
+
+    SharedPreferences speicher_fragment;
+
+    SharedPreferences.Editor speicher_editor;
+
+    public String user="";
 
 
     public MysqliteHelper( Context context, String name,  SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
+        speicher_fragment = context.getSharedPreferences("loginUser", Context.MODE_PRIVATE);
+        speicher_editor = speicher_fragment.edit();
+        user = speicher_fragment.getString("username", "");
     }
 
     public MysqliteHelper( Context context) {
@@ -18,6 +30,11 @@ public class MysqliteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.i("tag","--------------OnCreate------------");
+
+        String sql= "create table"+user+"_friendlist(_id Integer primary key,name varchar(40)";
+        System.out.println(sql);
+
+
     }
 
     @Override
@@ -29,5 +46,8 @@ public class MysqliteHelper extends SQLiteOpenHelper {
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
         Log.i("tag","--------------OnOpen------------");
+        String sql= "create table "+Constant.getUserName()+"_friendlist(_id Integer primary key,name varchar(40))";
+        System.out.println(sql);
+       //db.execSQL(sql);
     }
 }

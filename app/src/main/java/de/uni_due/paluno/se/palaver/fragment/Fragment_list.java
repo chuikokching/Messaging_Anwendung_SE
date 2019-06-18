@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import de.uni_due.paluno.se.palaver.Datenbank.Constant;
 import de.uni_due.paluno.se.palaver.Datenbank.DBManager;
 import de.uni_due.paluno.se.palaver.Datenbank.MysqliteHelper;
 import de.uni_due.paluno.se.palaver.VolleyClass;
@@ -53,8 +54,18 @@ public class Fragment_list extends Fragment {
         mCollectRecyclerView.setHasFixedSize(true);
         mCollectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        speicher_fragment = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
+        speicher_editor = speicher_fragment.edit();
+
+        String user = speicher_fragment.getString("username", "");
+
+        Constant.setUserName(user);
+
+
         helper = DBManager.getInstance(this.getContext());
         SQLiteDatabase db = helper.getWritableDatabase();
+
+        db.close();
 
         friend_list= new ArrayList<>();
         //volley_getFriendslist();
@@ -64,6 +75,7 @@ public class Fragment_list extends Fragment {
     }
 
     public void addUser(){
+        friend_list.add("test123126");
         friend_list.add("chuikokching");
         friend_list.add("jeff");
         friend_list.add("gogogogogogo");
@@ -74,8 +86,6 @@ public class Fragment_list extends Fragment {
 
     public void volley_getFriendslist()
     {
-        speicher_fragment = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
-        speicher_editor = speicher_fragment.edit();
 
         String user = speicher_fragment.getString("username", "");
         String pass = speicher_fragment.getString("password", "");

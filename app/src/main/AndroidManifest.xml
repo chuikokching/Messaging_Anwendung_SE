@@ -51,13 +51,8 @@
             </intent-filter>
         </service>
 
-        <service android:name=".Firebase.MyFirebaseInstanceIdService" android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase. INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
 
-        <service android:name=".Firebase.TokenService" android:exported="false"> </service>
+
 
     </application>
 

@@ -1,6 +1,7 @@
 package de.uni_due.paluno.se.palaver.Datenbank;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 public class DBManager {
 
@@ -11,5 +12,16 @@ public class DBManager {
             helper = new MysqliteHelper(context);
         }
         return helper;
+    }
+
+    public static void execSQL(SQLiteDatabase db,String sql)
+    {
+        if(db!=null)
+        {
+            if(sql!=null&&!"".equals(sql))
+            {
+                db.execSQL(sql);
+            }
+        }
     }
 }
