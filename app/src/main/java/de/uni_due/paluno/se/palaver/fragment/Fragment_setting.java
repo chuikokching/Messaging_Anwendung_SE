@@ -50,12 +50,7 @@ public class Fragment_setting extends Fragment {
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //speicher_fragment= getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
-                //speicher_editor=speicher_fragment.edit();
-                //Toast.makeText(getActivity(), "successfully", Toast.LENGTH_LONG).show();
-                //String user = speicher_fragment.getString("username", "");
-                //String pass = speicher_fragment.getString("password", "");
-                //System.out.println(" Log out !!!!!!" + user + " " + pass);
+
                 Intent test2 =new Intent(getActivity(),MainActivity.class);
                 startActivity(test2);
                 getActivity().finish();

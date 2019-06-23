@@ -64,14 +64,15 @@ public class Fragment_list extends Fragment {
 
         Constant.setUserName(user);
 
-        volley_getFriendslist();
 
         helper = DBManager.getInstance(this.getContext());
 
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        db.close();
 
+        volley_getFriendslist();
+
+        db.close();
 
 
         return view;
@@ -111,7 +112,7 @@ public class Fragment_list extends Fragment {
                             String number= response.getString("MsgType");
                             String info = response.getString("Info");
                             JSONArray data = response.getJSONArray("Data");
-
+                            String sql = "";
                             if(number.equals("1")) {
 
                                 for (int i=1; i<data.length(); i++){

@@ -14,14 +14,13 @@ public class MysqliteHelper extends SQLiteOpenHelper {
 
     SharedPreferences.Editor speicher_editor;
 
-    public String user="";
 
 
     public MysqliteHelper( Context context, String name,  SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         speicher_fragment = context.getSharedPreferences("loginUser", Context.MODE_PRIVATE);
         speicher_editor = speicher_fragment.edit();
-        user = speicher_fragment.getString("username", "");
+
     }
 
     public MysqliteHelper( Context context) {
