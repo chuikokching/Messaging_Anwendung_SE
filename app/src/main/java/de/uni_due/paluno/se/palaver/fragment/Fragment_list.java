@@ -68,13 +68,66 @@ public class Fragment_list extends Fragment {
 
         helper = DBManager.getInstance(this.getContext());
 
+        if(have_db())
+        {
+            if(have_date())
+            {
+                getFriendslist_fromDB();
+            }
+            else
+            {
+                volley_getFriendslist();
 
-        //volley_getFriendslist();
+                getFriendslist_fromDB();
+            }
 
-        getFriendslist_fromDB();
-
+        }
+        if(!have_db())
+        {
+            createDB();
+            volley_getFriendslist();
+            getFriendslist_fromDB();
+        }
         return view;
     }
+
+    public void createDB(){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String sql= "create table "+Constant.getUserName()+"_friendlist(_id Integer primary key,name varchar(40))";
+        DBManager.execute_SQL(db,sql);
+    }
+
+    public boolean have_date(){
+        Cursor cursor ;
+        SQLiteDatabase db = helper.getWritableDatabase();
+        cursor=db.query(Constant.getUserName()+"_friendlist",null,null,null,null,null,null);
+
+        if(cursor.getCount()>0)
+            return true;
+        else
+            return false;
+    }
+
+
+    public boolean have_db(){
+        boolean test = false ;
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor;
+        String sql = "select name from sqlite_master where type='table'";
+        cursor = db.rawQuery(sql,null);
+        while (cursor.moveToNext())
+        {
+            String name = cursor.getString(0);
+            if(name.equals(Constant.getUserName()+"_friendlist"))
+            {
+                test = true;
+                break;
+            }
+        }
+        Log.i("tag",test + " test in fragment 1!!");
+        return test;
+    }
+
 
     public void addUser(){
 
@@ -87,7 +140,6 @@ public class Fragment_list extends Fragment {
         SQLiteDatabase db = helper.getWritableDatabase();
         String sql = "select * from "+Constant.getUserName()+"_friendlist";
         Cursor cursor = db.rawQuery(sql, null);
-        int a = cursor.getCount();
 
         while(cursor.moveToNext())
         {
