@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         speicher_Editor.putBoolean("login",true);
         speicher_Editor.putString("username", name);
         speicher_Editor.putString("password", pass);
+
         speicher_Editor.commit();
 
     }

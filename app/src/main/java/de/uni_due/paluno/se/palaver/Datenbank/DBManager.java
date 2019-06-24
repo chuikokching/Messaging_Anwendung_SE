@@ -14,7 +14,7 @@ public class DBManager {
         return helper;
     }
 
-    public static void execSQL(SQLiteDatabase db,String sql)
+    public static void execute_SQL(SQLiteDatabase db,String sql)
     {
         if(db!=null)
         {

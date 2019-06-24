@@ -1,7 +1,9 @@
 package de.uni_due.paluno.se.palaver.fragment;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
@@ -39,7 +41,7 @@ public class Fragment_list extends Fragment {
     private UserAdapter user;
     private List<String> friend_list;
 
-    private MysqliteHelper helper;
+    public MysqliteHelper helper;
 
     public RecyclerView mCollectRecyclerView;
 
@@ -64,16 +66,12 @@ public class Fragment_list extends Fragment {
 
         Constant.setUserName(user);
 
-
         helper = DBManager.getInstance(this.getContext());
 
-        SQLiteDatabase db = helper.getWritableDatabase();
 
+        //volley_getFriendslist();
 
-        volley_getFriendslist();
-
-        db.close();
-
+        getFriendslist_fromDB();
 
         return view;
     }
@@ -84,9 +82,26 @@ public class Fragment_list extends Fragment {
         mCollectRecyclerView.setAdapter(user);
     }
 
+    public void getFriendslist_fromDB()
+    {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String sql = "select * from "+Constant.getUserName()+"_friendlist";
+        Cursor cursor = db.rawQuery(sql, null);
+        int a = cursor.getCount();
+
+        while(cursor.moveToNext())
+        {
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            friend_list.add(name);
+        }
+        addUser();
+
+    }
+
+
     public void volley_getFriendslist()
     {
-
+        final SQLiteDatabase db = helper.getWritableDatabase();
         String user = speicher_fragment.getString("username", "");
         String pass = speicher_fragment.getString("password", "");
 
@@ -111,16 +126,28 @@ public class Fragment_list extends Fragment {
                         try {
                             String number= response.getString("MsgType");
                             String info = response.getString("Info");
-                            JSONArray data = response.getJSONArray("Data");
-                            String sql = "";
-                            if(number.equals("1")) {
 
-                                for (int i=1; i<data.length(); i++){
-                                     //Log.i("tag",data.getString(i));
-                                    friend_list.add(data.getString(i));
+                            JSONArray data = response.getJSONArray("Data");
+
+                            if(number.equals("1")) {
+                                ContentValues values = new ContentValues();
+
+                                for (int i=0; i<data.length(); i++){
+                                   values.put("_id",i);
+                                   values.put("name",data.getString(i));
+                                  //  Log.i("tag",data.getString(i));
+                                    //friend_list.add(data.getString(i));
+                                   long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
+                                   if(result>0)
+                                   {
+                                        Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
+                                   }
+                                    else {
+                                       Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                                addUser();
-                                Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
+                                //addUser();
+                                //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
 
                             else
