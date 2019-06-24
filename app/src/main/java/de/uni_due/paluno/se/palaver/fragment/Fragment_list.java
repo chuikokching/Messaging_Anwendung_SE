@@ -72,29 +72,30 @@ public class Fragment_list extends Fragment {
         {
             if(have_date())
             {
+                Log.i("tag", " has data in db1");
                 getFriendslist_fromDB();
             }
             else
             {
                 volley_getFriendslist();
-
-                getFriendslist_fromDB();
+                Log.i("tag", " has data in db2");
             }
 
         }
         if(!have_db())
         {
             createDB();
+            Log.i("tag", " has data in db3 outside");
             volley_getFriendslist();
-            getFriendslist_fromDB();
         }
         return view;
     }
 
     public void createDB(){
         SQLiteDatabase db = helper.getWritableDatabase();
+        Log.i("tag", " has data in db3");
         String sql= "create table "+Constant.getUserName()+"_friendlist(_id Integer primary key,name varchar(40))";
-        DBManager.execute_SQL(db,sql);
+        db.execSQL(sql);
     }
 
     public boolean have_date(){
@@ -108,6 +109,16 @@ public class Fragment_list extends Fragment {
             return false;
     }
 
+    public int have_dateint(){
+        Cursor cursor ;
+        SQLiteDatabase db = helper.getWritableDatabase();
+        cursor=db.query(Constant.getUserName()+"_friendlist",null,null,null,null,null,null);
+
+        if(cursor.getCount()>0)
+            return cursor.getCount();
+        else
+            return 0;
+    }
 
     public boolean have_db(){
         boolean test = false ;
@@ -124,7 +135,7 @@ public class Fragment_list extends Fragment {
                 break;
             }
         }
-        Log.i("tag",test + " test in fragment 1!!");
+        //Log.i("tag",test + " test in fragment 1!!");
         return test;
     }
 
@@ -134,22 +145,6 @@ public class Fragment_list extends Fragment {
         user= new UserAdapter(getContext(),friend_list);
         mCollectRecyclerView.setAdapter(user);
     }
-
-    public void getFriendslist_fromDB()
-    {
-        SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "select * from "+Constant.getUserName()+"_friendlist";
-        Cursor cursor = db.rawQuery(sql, null);
-
-        while(cursor.moveToNext())
-        {
-            String name = cursor.getString(cursor.getColumnIndex("name"));
-            friend_list.add(name);
-        }
-        addUser();
-
-    }
-
 
     public void volley_getFriendslist()
     {
@@ -172,8 +167,6 @@ public class Fragment_list extends Fragment {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        //Log.i("Output from server: ", response.toString());
-                        //System.out.println("Output from server: "+ response.toString());
 
                         try {
                             String number= response.getString("MsgType");
@@ -183,22 +176,20 @@ public class Fragment_list extends Fragment {
 
                             if(number.equals("1")) {
                                 ContentValues values = new ContentValues();
-
+                                Log.i("tag", " has data in db3 in volley");
                                 for (int i=0; i<data.length(); i++){
-                                   values.put("_id",i);
-                                   values.put("name",data.getString(i));
-                                  //  Log.i("tag",data.getString(i));
-                                    //friend_list.add(data.getString(i));
-                                   long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
-                                   if(result>0)
-                                   {
+                                    values.put("_id",i);
+                                    values.put("name",data.getString(i));
+                                    long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
+                                    if(result>0)
+                                    {
                                         Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
-                                   }
+                                    }
                                     else {
-                                       Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
                                     }
                                 }
-                                //addUser();
+                                getFriendslist_fromDB();
                                 //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
 
@@ -227,6 +218,26 @@ public class Fragment_list extends Fragment {
         VolleyClass.getHttpQueues().add(jsonArrayReq);
     }
 
+
+    public void getFriendslist_fromDB()
+    {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        //String sql = "select * from "+Constant.getUserName()+"_friendlist";
+        Cursor cursor = db.query(Constant.getUserName()+"_friendlist",null,null,null,null,null,null);
+        Log.i("tag", " has data in db3 in DB");
+        Log.i("tag",cursor.getCount() + " test in from DB");
+        while(cursor.moveToNext())
+        {
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            Log.i("tag", " added in recycleview");
+            friend_list.add(name);
+        }
+        addUser();
+    }
+
+
+
+
     @Override
     public void onStop() {
         super.onStop();
@@ -241,8 +252,26 @@ public class Fragment_list extends Fragment {
 
         }else{  // displayed onResume();
 
-            //volley_getFriendslist();
-        }
+            if(!(friend_list.size()==have_dateint()))
+            {
+                SQLiteDatabase db = helper.getWritableDatabase();
+                String sql = "select * from "+Constant.getUserName()+"_friendlist";
+                Cursor cursor = db.rawQuery(sql, null);
+
+                while(cursor.moveToNext())
+                {
+                    Log.i("tag",cursor.getInt(cursor.getColumnIndex("_id")) + " test in fragment cycle ");
+                    if(cursor.getInt(cursor.getColumnIndex("_id"))==(have_dateint()-1))
+                    {
+                        String name = cursor.getString(cursor.getColumnIndex("name"));
+                        friend_list.add(name);
+                    }
+
+                }
+                addUser();
+            }
+           Log.i("tag",friend_list.size() + " test in fragment_list ");
+       }
     }
 
 }

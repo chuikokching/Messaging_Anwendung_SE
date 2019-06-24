@@ -29,8 +29,7 @@ public class MysqliteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.i("tag","--------------OnCreate------------");
-        String sql= "create table "+Constant.getUserName()+"_friendlist(_id Integer primary key,name varchar(40))";
-        sqLiteDatabase.execSQL(sql);
+
     }
 
     @Override
