@@ -62,6 +62,7 @@ public class Fragment_setting extends Fragment {
             @Override
             public void onClick(View v) {
                 volley_add(v,nickname);
+                nickname.setText("");
             }
         });
 
