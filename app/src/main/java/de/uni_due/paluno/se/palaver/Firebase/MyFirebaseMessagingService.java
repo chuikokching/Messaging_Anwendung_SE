@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -24,6 +25,9 @@ import static android.support.v4.content.ContextCompat.getSystemService;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+    SharedPreferences speicher_fragment;
+
+    SharedPreferences.Editor speicher_editor;
 
     @Override
     public void onMessageReceived(RemoteMessage message)
@@ -31,24 +35,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //broadcast
         super.onMessageReceived(message);
 
-        //String title = message.getNotification().getTitle();
+        speicher_fragment = getSharedPreferences("loginUser", Context.MODE_PRIVATE);
+        speicher_editor = speicher_fragment.edit();
+
         String sender = message.getData().get("sender");
         String preview = message.getData().get("preview");
-        // Log.i("tag","test = title :"+sender);
-        //Log.i("tag","test = text :"+preview);
+        //String title = message.getNotification().getTitle();
+        String user = speicher_fragment.getString("username", "");
+        if(!user.equals(sender))
+        {
+            createNotificationChannel();
 
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "id")
+                    .setSmallIcon(R.drawable.star)
+                    .setContentTitle("Text from palaver")
+                    .setContentText(sender+" : "+preview)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        createNotificationChannel();
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "id")
-                .setSmallIcon(R.drawable.star)
-                .setContentTitle("Text from palaver")
-                .setContentText(sender+" : "+preview)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(1,builder.build());
-
+            NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(1,builder.build());
+        }
 
     }
 

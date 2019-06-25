@@ -72,30 +72,42 @@ public class Fragment_list extends Fragment {
         {
             if(have_date())
             {
-                Log.i("tag", " has data in db1");
                 getFriendslist_fromDB();
             }
             else
             {
                 volley_getFriendslist();
-                Log.i("tag", " has data in db2");
             }
 
         }
         if(!have_db())
         {
             createDB();
-            Log.i("tag", " has data in db3 outside");
+
             volley_getFriendslist();
         }
+
+
         return view;
     }
 
     public void createDB(){
         SQLiteDatabase db = helper.getWritableDatabase();
-        Log.i("tag", " has data in db3");
         String sql= "create table "+Constant.getUserName()+"_friendlist(_id Integer primary key,name varchar(40))";
         db.execSQL(sql);
+
+
+    }
+
+    public void createMessage_DB(){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        for(String name : friend_list)
+        {
+            String sql= "create table "+Constant.getUserName()+"_"+name+"(_id Integer primary key,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data varchar(1000))";
+            db.execSQL(sql);
+            requestMessage_DB(name);
+        }
+
     }
 
     public boolean have_date(){
@@ -139,7 +151,6 @@ public class Fragment_list extends Fragment {
         return test;
     }
 
-
     public void addUser(){
 
         user= new UserAdapter(getContext(),friend_list);
@@ -176,20 +187,23 @@ public class Fragment_list extends Fragment {
 
                             if(number.equals("1")) {
                                 ContentValues values = new ContentValues();
-                                Log.i("tag", " has data in db3 in volley");
                                 for (int i=0; i<data.length(); i++){
                                     values.put("_id",i);
                                     values.put("name",data.getString(i));
                                     long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
                                     if(result>0)
                                     {
-                                        Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
+                                       // Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
                                     }
                                     else {
-                                        Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                       // Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
                                     }
                                 }
+
                                 getFriendslist_fromDB();
+                                createMessage_DB();
+
+                               // createMessage_DB();
                                 //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
 
@@ -222,26 +236,112 @@ public class Fragment_list extends Fragment {
     public void getFriendslist_fromDB()
     {
         SQLiteDatabase db = helper.getWritableDatabase();
-        //String sql = "select * from "+Constant.getUserName()+"_friendlist";
+
         Cursor cursor = db.query(Constant.getUserName()+"_friendlist",null,null,null,null,null,null);
-        Log.i("tag", " has data in db3 in DB");
-        Log.i("tag",cursor.getCount() + " test in from DB");
+
         while(cursor.moveToNext())
         {
             String name = cursor.getString(cursor.getColumnIndex("name"));
-            Log.i("tag", " added in recycleview");
             friend_list.add(name);
         }
         addUser();
+
     }
 
 
+    public void requestMessage_DB(final String recipient)
+    {
+        String user = speicher_fragment.getString("username", "");
+        String pass = speicher_fragment.getString("password", "");
+        final SQLiteDatabase db = helper.getWritableDatabase();
+
+        String url="http://palaver.se.paluno.uni-due.de/api/message/get";
+
+        HashMap<String,String> map=new HashMap<>();
+        map.put("Username",user);
+        map.put("Password",pass);
+
+        map.put("Recipient",recipient);
+        JSONObject jsonObject=new JSONObject(map);
+        JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String number= response.getString("MsgType");
+                            String info = response.getString("Info");
+                            JSONArray data = response.getJSONArray("Data");
+                            ContentValues values = new ContentValues();
+                            if(number.equals("1")) {
+                                JSONObject temp = null;
+                                for(int i=0;i<data.length();i++)
+                                {
+                                    if(data.length() == 0)
+                                    {
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        temp = data.getJSONObject(i);
+                                        values.put("_id",i);
+                                        values.put("Sender",temp.get("Sender").toString());
+                                        values.put("Recipient",temp.get("Recipient").toString());
+                                        values.put("Mimetype",temp.get("Mimetype").toString());
+                                        values.put("Data",temp.get("Data").toString());
+
+                                        //Log.i("tag",data.length() +" "+temp.get("Sender").toString()+" "+temp.get("Recipient")+" "+ temp.get("Data").toString());
+                                        long result = db.insert(Constant.getUserName()+"_"+recipient,null,values);
+                                        if(result>0)
+                                        {
+                                            Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    }
+
+                                }
+
+                                Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
+                            }
+
+                            else
+                            {
+                                Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getActivity(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        System.out.println("Output from Error: "+ error.toString());
+                        Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
+        jsonArrayReq.setTag("getMessagelist_Request");
+        VolleyClass.getHttpQueues().add(jsonArrayReq);
+
+    }
 
 
     @Override
     public void onStop() {
         super.onStop();
         VolleyClass.getHttpQueues().cancelAll("getfriendlist_Request");
+        VolleyClass.getHttpQueues().cancelAll("getMessagelist_Request");
     }
 
     @Override
@@ -260,7 +360,6 @@ public class Fragment_list extends Fragment {
 
                 while(cursor.moveToNext())
                 {
-                    Log.i("tag",cursor.getInt(cursor.getColumnIndex("_id")) + " test in fragment cycle ");
                     if(cursor.getInt(cursor.getColumnIndex("_id"))==(have_dateint()-1))
                     {
                         String name = cursor.getString(cursor.getColumnIndex("name"));
