@@ -199,10 +199,8 @@ public class Fragment_list extends Fragment {
                                        // Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
                                     }
                                 }
-
                                 getFriendslist_fromDB();
                                 createMessage_DB();
-
                                // createMessage_DB();
                                 //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }

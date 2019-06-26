@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -78,15 +79,14 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        //messageAdapter = new MessageAdapter();
 
-        userMessage_list = findViewById(R.id.recycleview_chat);
+        userMessage_list = (RecyclerView) findViewById(R.id.recycleview_chat);
         userMessage_list.setHasFixedSize(true);
 
-        LinearLayoutManager  lm=new LinearLayoutManager(getApplicationContext());
-        lm.setStackFromEnd(true);
-        userMessage_list.setLayoutManager(lm);
+        linearLayoutManager =new LinearLayoutManager(this);
+        userMessage_list.setLayoutManager(linearLayoutManager);
 
+        addMessage();
 
         send_btn = findViewById(R.id.btn_send);
 
@@ -108,7 +108,25 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    public void addMessage()
+    {
 
+        Message test =new Message("jeff","chuikokching","how old are you","text/plain");
+        Message test1 =new Message("chuikokching","jeff","9000000000000000000000000000000000000000000000000000000","text/plain");
+        Message test2 =new Message("chuikokching","jeff","good weather","text/plain");
+        Message_list.add(test);
+        Message_list.add(test1);
+        Message_list.add(test2);
+
+        messageAdapter = new MessageAdapter(Message_list);
+        userMessage_list.setAdapter(messageAdapter);
+
+    }
+    protected void onStart()
+    {
+        super.onStart();
+        Log.i("tag","-----------------------onSTart-------------------------");
+    }
 
 
     public void volley_send(View v,String recipient){

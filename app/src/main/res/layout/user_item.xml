@@ -6,32 +6,22 @@
     android:padding="10dp"
     >
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/profile_image"
+        android:src="@drawable/star"/>
     
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:id="@+id/receiver"
-        android:padding="10dp"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:text="receive messages here"
-        android:background="@drawable/chat_left"
-        android:textColor="@android:color/black"
+        android:text="username"
+        android:id="@+id/name_of_user"
+        android:layout_toRightOf="@+id/profile_image"
+        android:layout_toEndOf="@+id/profile_image"
+        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
         />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="@+id/receiver"
-        android:id="@+id/sender"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="10dp"
-        android:padding="10dp"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:text="send messages"
-        android:background="@drawable/chat_right"
-        />
 </RelativeLayout>

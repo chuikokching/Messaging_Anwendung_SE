@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public List<Message> userMessage_list;
 
 
+    public MessageAdapter()
+    {
+
+    }
 
     public MessageAdapter(List<Message> userMessage_list)
     {
@@ -47,7 +52,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.user_item,viewGroup,false);
+                .inflate(R.layout.custom_message,viewGroup,false);
         return new MessageViewHolder(view);
     }
 
@@ -59,22 +64,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         String receiver =message.getRecipient();
         String type = message.getMimetype();
         String data = message.getData();
+        Log.i("tag","-----------------------On MessageAdapter-------------------------" + sender +" " + type + Constant.getUserName());
 
         if(type.equals("text/plain"))
         {
-
+            messageViewHolder.leftMessageText.setVisibility(View.INVISIBLE);
             if(Constant.getUserName().equals(sender))
             {
-                messageViewHolder.leftMessageText.setVisibility(View.INVISIBLE);
+                Log.i("tag","-----------------------On MessageAdapter-------------inside------------");
                 messageViewHolder.rightMessageText.setBackgroundResource(R.drawable.chat_right);
-                messageViewHolder.rightMessageText.setText(data);
+                messageViewHolder.rightMessageText.setText(sender + ":"+data);
             }
             else {
                 messageViewHolder.rightMessageText.setVisibility(View.INVISIBLE);
                 messageViewHolder.leftMessageText.setVisibility(View.VISIBLE);
-
+                Log.i("tag","-----------------------On MessageAdapter-------------outside------------");
                 messageViewHolder.leftMessageText.setBackgroundResource(R.drawable.chat_left);
-                messageViewHolder.leftMessageText.setText(data);
+                messageViewHolder.leftMessageText.setText(sender+":"+data);
             }
         }
 
