@@ -13,68 +13,78 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.uni_due.paluno.se.palaver.ChatActivity;
-import de.uni_due.paluno.se.palaver.Modell.Chat;
+import de.uni_due.paluno.se.palaver.Datenbank.Constant;
 import de.uni_due.paluno.se.palaver.R;
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
-    private Context mcontext;
-    private List<Chat> ulist;
-    public static final int MSG_TYPE_LEFT=0;
-    public static final int MSG_TYPE_RIGHT=1;
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
+
+    public List<Message> userMessage_list;
 
 
-    public MessageAdapter(Context m, List<Chat> muser)
+
+    public MessageAdapter(List<Message> userMessage_list)
     {
-        this.mcontext=m;
-        this.ulist=muser;
+        this.userMessage_list=userMessage_list;
+    }
+
+
+    public class MessageViewHolder extends RecyclerView.ViewHolder
+    {
+        public TextView leftMessageText,rightMessageText;
+
+
+        public MessageViewHolder(@NonNull View itemView)
+        {
+            super(itemView);
+
+            leftMessageText = (TextView)itemView.findViewById(R.id.receiver);
+            rightMessageText = (TextView)itemView.findViewById(R.id.sender);
+        }
+
     }
 
     @NonNull
     @Override
-    public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-
-        if(viewType==MSG_TYPE_RIGHT) {
-            View view = LayoutInflater.from(mcontext).inflate(R.layout.chat_item_right, viewGroup, false);
-            return new MessageAdapter.ViewHolder(view);
-        }
-        else {
-            View view = LayoutInflater.from(mcontext).inflate(R.layout.chat_item_left, viewGroup, false);
-            return new MessageAdapter.ViewHolder(view);
-        }
+    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.user_item,viewGroup,false);
+        return new MessageViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull MessageViewHolder messageViewHolder, int i) {
 
-            Chat chat = ulist.get(i);
-            viewHolder.text.setText(chat.getMessage());
-            viewHolder.pro_image.setImageResource(R.drawable.star);
+        Message message = userMessage_list.get(i);
+        String sender = message.getSender();
+        String receiver =message.getRecipient();
+        String type = message.getMimetype();
+        String data = message.getData();
 
+        if(type.equals("text/plain"))
+        {
+
+            if(Constant.getUserName().equals(sender))
+            {
+                messageViewHolder.leftMessageText.setVisibility(View.INVISIBLE);
+                messageViewHolder.rightMessageText.setBackgroundResource(R.drawable.chat_right);
+                messageViewHolder.rightMessageText.setText(data);
+            }
+            else {
+                messageViewHolder.rightMessageText.setVisibility(View.INVISIBLE);
+                messageViewHolder.leftMessageText.setVisibility(View.VISIBLE);
+
+                messageViewHolder.leftMessageText.setBackgroundResource(R.drawable.chat_left);
+                messageViewHolder.leftMessageText.setText(data);
+            }
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return ulist.size();
+
+        return userMessage_list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView text;
-        public ImageView pro_image;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-
-            text = itemView.findViewById(R.id.message_show);
-            pro_image = itemView.findViewById(R.id.left_image);
-        }
-
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return super.getItemViewType(position);
-    }
 }

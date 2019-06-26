@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.uni_due.paluno.se.palaver.Adapter.Message;
 import de.uni_due.paluno.se.palaver.Adapter.MessageAdapter;
-import de.uni_due.paluno.se.palaver.Modell.Chat;
+
+
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -42,11 +44,12 @@ public class ChatActivity extends AppCompatActivity {
     EditText send_text;
     ImageButton send_btn;
 
-    RecyclerView re_View;
+    RecyclerView userMessage_list;
 
+    List<Message> Message_list= new ArrayList<>();
 
+    LinearLayoutManager linearLayoutManager;
     MessageAdapter messageAdapter;
-    List<Chat> mchat;
 
     @Override
     protected void onStop() {
@@ -75,12 +78,14 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        re_View = findViewById(R.id.recycleview_chat);
-        re_View.setHasFixedSize(true);
+        //messageAdapter = new MessageAdapter();
+
+        userMessage_list = findViewById(R.id.recycleview_chat);
+        userMessage_list.setHasFixedSize(true);
 
         LinearLayoutManager  lm=new LinearLayoutManager(getApplicationContext());
         lm.setStackFromEnd(true);
-        re_View.setLayoutManager(lm);
+        userMessage_list.setLayoutManager(lm);
 
 
         send_btn = findViewById(R.id.btn_send);
@@ -103,12 +108,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-
-    private void getMessage(String sender,String receiver){
-        mchat = new ArrayList<>();
-
-
-    }
 
 
 

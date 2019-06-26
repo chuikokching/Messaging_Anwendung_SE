@@ -103,7 +103,7 @@ public class Fragment_list extends Fragment {
         SQLiteDatabase db = helper.getWritableDatabase();
         for(String name : friend_list)
         {
-            String sql= "create table "+Constant.getUserName()+"_"+name+"(_id Integer primary key,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data varchar(1000))";
+            String sql= "create table "+Constant.getUserName()+"_"+name+"(_id Integer primary key,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data text)";
             db.execSQL(sql);
             requestMessage_DB(name);
         }
@@ -301,9 +301,7 @@ public class Fragment_list extends Fragment {
                                         else {
                                             Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
                                         }
-
                                     }
-
                                 }
 
                                 Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
