@@ -195,8 +195,6 @@ public class ChatActivity extends AppCompatActivity {
                                 String number= response.getString("MsgType");
                                 String info = response.getString("Info");
                                 if(number.equals("1")) {
-
-                                    Log.i("tag"," send successfully!!! "+ data );
                                     ContentValues values = new ContentValues();
                                     values.put("Sender",user);
                                     values.put("Recipient",recipient);
@@ -207,10 +205,10 @@ public class ChatActivity extends AppCompatActivity {
                                     long result = db.insert(Constant.getUserName()+"_"+recipient,null,values);
                                     if(result>0)
                                     {
-                                        Toast.makeText(getApplicationContext(),"Successfully",Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getApplicationContext(),"Successfully",Toast.LENGTH_SHORT).show();
                                     }
                                     else {
-                                        Toast.makeText(getApplicationContext(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                       // Toast.makeText(getApplicationContext(),"failed"+info,Toast.LENGTH_SHORT).show();
                                     }
                                     Message message = new Message(user,recipient,data,"text/plain");
                                    // Log.i("tag"," send successfully!!! test after "+ message.getData());
@@ -279,7 +277,7 @@ public class ChatActivity extends AppCompatActivity {
                                     values.put("Mimetype", temp.get("Mimetype").toString());
                                     values.put("Data", temp.get("Data").toString());
 
-                                    Log.i("tag", data.length() + " and listsize "+ Message_list.size() + " " + temp.get("Sender").toString() + " " + temp.get("Recipient").toString() + " " + temp.get("Data").toString());
+                                    //Log.i("tag", data.length() + " and listsize "+ Message_list.size() + " " + temp.get("Sender").toString() + " " + temp.get("Recipient").toString() + " " + temp.get("Data").toString());
                                     long result = db.insert(Constant.getUserName() + "_" + sender, null, values);
                                     if (result > 0) {
                                         //Log.i("tag", "--------------Successfully in DB----------");
