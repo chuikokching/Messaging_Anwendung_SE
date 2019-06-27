@@ -129,7 +129,10 @@ public class ChatActivity extends AppCompatActivity {
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("tag",intent.getExtras().getString("data"));
+            String sender = intent.getExtras().getString("sender");
+            Log.i("tag",  "---------------  test in chatactivity --------------------");
+            requestMessage_DB(sender);
+
         }
     };
 
@@ -159,7 +162,6 @@ public class ChatActivity extends AppCompatActivity {
         userMessage_list.setAdapter(messageAdapter);
 
     }
-
 
 
     public void volley_send(View v, final String recipient){
@@ -240,6 +242,84 @@ public class ChatActivity extends AppCompatActivity {
             jsonArrayReq.setTag("Send_Request");
             VolleyClass.getHttpQueues().add(jsonArrayReq);
         }
+    }
+
+
+    public void requestMessage_DB(final String sender) {
+        String user = speicher_fragment.getString("username", "");
+        String pass = speicher_fragment.getString("password", "");
+        final SQLiteDatabase db = helper.getWritableDatabase();
+
+        String url = "http://palaver.se.paluno.uni-due.de/api/message/get";
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("Username", user);
+        map.put("Password", pass);
+        map.put("Recipient", sender);
+
+        JSONObject jsonObject = new JSONObject(map);
+        JsonObjectRequest jsonArrayReq = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String number = response.getString("MsgType");
+                            String info = response.getString("Info");
+                            JSONArray data = response.getJSONArray("Data");
+                            ContentValues values = new ContentValues();
+                            if (number.equals("1")) {
+                                JSONObject temp = null;
+                                if (data.length() != 0) {
+                                    temp = data.getJSONObject(data.length() - 1);
+                                    values.put("Sender", temp.get("Sender").toString());
+                                    values.put("Recipient", temp.get("Recipient").toString());
+                                    values.put("Mimetype", temp.get("Mimetype").toString());
+                                    values.put("Data", temp.get("Data").toString());
+
+                                    Log.i("tag", data.length() + " and listsize "+ Message_list.size() + " " + temp.get("Sender").toString() + " " + temp.get("Recipient").toString() + " " + temp.get("Data").toString());
+                                    long result = db.insert(Constant.getUserName() + "_" + sender, null, values);
+                                    if (result > 0) {
+                                        //Log.i("tag", "--------------Successfully in DB----------");
+                                        Toast.makeText(getApplicationContext(),"Successfully",Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        //Log.i("tag", "--------------failed----------");
+                                        Toast.makeText(getApplicationContext(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    Message message = new Message(temp.get("Sender").toString(),temp.get("Recipient").toString(),temp.get("Data").toString(),temp.get("Mimetype").toString());
+                                    Message_list.add(message);
+                                    addMessage();
+
+                                }
+                                Toast.makeText(getApplicationContext(),"Info: "+info,Toast.LENGTH_SHORT).show();
+                            } else {
+                                //Log.i("tag", "--------------failed----------");
+                                Toast.makeText(getApplicationContext(),"Info: "+info,Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                           // Log.i("tag", "--------------failed----------");
+                            Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        System.out.println("Output from Error: " + error.toString());
+                        //Log.i("tag", "--------------failed----------");
+                        Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
+        jsonArrayReq.setTag("getMessagelist_Request");
+        VolleyClass.getHttpQueues().add(jsonArrayReq);
     }
 
     protected void onStart()

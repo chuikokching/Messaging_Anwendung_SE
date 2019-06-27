@@ -76,10 +76,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
             manager.notify(1,builder.build());
 
-            requestMessage_DB(sender);
+            //requestMessage_DB(sender);
 
             Intent intent = new Intent(action);
-            intent.putExtra("data","data from Notification");
+            intent.putExtra("sender",sender);
             Log.i("tag","broadcast sent!!!!!!");
             sendBroadcast(intent);
 
