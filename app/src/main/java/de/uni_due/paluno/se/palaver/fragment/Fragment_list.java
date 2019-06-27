@@ -186,23 +186,27 @@ public class Fragment_list extends Fragment {
                             JSONArray data = response.getJSONArray("Data");
 
                             if(number.equals("1")) {
-                                ContentValues values = new ContentValues();
-                                for (int i=0; i<data.length(); i++){
-                                    values.put("_id",i);
-                                    values.put("name",data.getString(i));
-                                    long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
-                                    if(result>0)
-                                    {
-                                       // Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
+
+                                if(data.length()!=0)
+                                {
+                                    ContentValues values = new ContentValues();
+                                    for (int i=0; i<data.length(); i++){
+                                        values.put("_id",i);
+                                        values.put("name",data.getString(i));
+                                        long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
+                                        if(result>0)
+                                        {
+                                            // Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            // Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                    else {
-                                       // Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
-                                    }
+                                    getFriendslist_fromDB();
+                                    createMessage_DB();
+                                    // createMessage_DB();
+                                    //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                                 }
-                                getFriendslist_fromDB();
-                                createMessage_DB();
-                               // createMessage_DB();
-                                //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
 
                             else

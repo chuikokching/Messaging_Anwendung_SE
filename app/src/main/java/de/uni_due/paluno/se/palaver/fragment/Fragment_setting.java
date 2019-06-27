@@ -137,21 +137,12 @@ public class Fragment_setting extends Fragment {
                                 long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
                                 String sql= "create table "+Constant.getUserName()+"_"+friend+" (_id Integer primary key autoincrement ,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data text)";
                                 db.execSQL(sql);
-                                if(result>0)
-                                {
-                                    Toast.makeText(getActivity(),"Update DB Successfully",Toast.LENGTH_SHORT).show();
-                                }
-                                else {
-                                    Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
-                                }
+                                Toast.makeText(getActivity(),"Update DB Successfully",Toast.LENGTH_SHORT).show();
                             }
-
                             else
                             {
                                 Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getActivity(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();

@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             NetworkInfo info=cm.getActiveNetworkInfo();
             if(info==null||!info.isAvailable())
             {
+                Log.i("tag","----------------------Kein Netz-------------------");
               Intent test2 =new Intent(MainActivity.this, UserInterfaceActivity.class);
                 startActivity(test2);
                 MainActivity.this.finish();
