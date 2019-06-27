@@ -1,8 +1,11 @@
 package de.uni_due.paluno.se.palaver;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,7 +33,9 @@ import java.util.List;
 
 import de.uni_due.paluno.se.palaver.Adapter.Message;
 import de.uni_due.paluno.se.palaver.Adapter.MessageAdapter;
-
+import de.uni_due.paluno.se.palaver.Datenbank.Constant;
+import de.uni_due.paluno.se.palaver.Datenbank.DBManager;
+import de.uni_due.paluno.se.palaver.Datenbank.MysqliteHelper;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -51,6 +57,10 @@ public class ChatActivity extends AppCompatActivity {
 
     LinearLayoutManager linearLayoutManager;
     MessageAdapter messageAdapter;
+
+    public MysqliteHelper helper;
+
+    public String recipient="";
 
     @Override
     protected void onStop() {
@@ -79,6 +89,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        helper = DBManager.getInstance(this);
 
         userMessage_list = (RecyclerView) findViewById(R.id.recycleview_chat);
         userMessage_list.setHasFixedSize(true);
@@ -86,7 +97,6 @@ public class ChatActivity extends AppCompatActivity {
         linearLayoutManager =new LinearLayoutManager(this);
         userMessage_list.setLayoutManager(linearLayoutManager);
 
-        addMessage();
 
         send_btn = findViewById(R.id.btn_send);
 
@@ -94,9 +104,11 @@ public class ChatActivity extends AppCompatActivity {
 
         intent = getIntent();
 
-        final String recipient=intent.getStringExtra("username");
+        recipient=intent.getStringExtra("username");
 
         username1.setText(recipient);
+
+        getMessage_fromDB();
 
         send_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,47 +120,52 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    public void getMessage_fromDB()
+    {
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        Cursor cursor = db.query(Constant.getUserName()+"_"+recipient,null,null,null,null,null,null);
+
+        while(cursor.moveToNext())
+        {
+            String sender = cursor.getString(cursor.getColumnIndex("Sender"));
+            String receiver = cursor.getString(cursor.getColumnIndex("Recipient"));
+            String type = cursor.getString(cursor.getColumnIndex("Mimetype"));
+            String data = cursor.getString(cursor.getColumnIndex("Data"));
+            Message message = new Message(sender,receiver,data,type);
+            Message_list.add(message);
+        }
+        addMessage();
+    }
+
+
     public void addMessage()
     {
-
-        Message test =new Message("jeff","chuikokching","how old are you","text/plain");
-        Message test1 =new Message("chuikokching","jeff","9000000000000000000000000000000000000000000000000000000","text/plain");
-        Message test2 =new Message("chuikokching","jeff","good weather","text/plain");
-        Message_list.add(test);
-        Message_list.add(test1);
-        Message_list.add(test2);
-
         messageAdapter = new MessageAdapter(Message_list);
         userMessage_list.setAdapter(messageAdapter);
 
     }
-    protected void onStart()
-    {
-        super.onStart();
-        Log.i("tag","-----------------------onSTart-------------------------");
-    }
 
 
-    public void volley_send(View v,String recipient){
+
+    public void volley_send(View v, final String recipient){
         String url="http://palaver.se.paluno.uni-due.de/api/message/send";
         send_text = findViewById(R.id.text_send);
-
-
-        if(send_text.getText().toString().equals("")){
+        final String data = send_text.getText().toString();
+        if(data.equals("")){
             Toast.makeText(getApplicationContext(),"Inputs can't be empty",Toast.LENGTH_SHORT).show();
         }
         else{
-
-            String user = speicher_fragment.getString("username", "");
-            String pass = speicher_fragment.getString("password", "");
-
+            final SQLiteDatabase db = helper.getWritableDatabase();
+            final String user = speicher_fragment.getString("username", "");
+            final String pass = speicher_fragment.getString("password", "");
 
             HashMap<String,String> map=new HashMap<>();
             map.put("Username",user);
             map.put("Password",pass);
             map.put("Recipient",recipient);
             map.put("Mimetype","text/plain");
-            map.put("Data",send_text.getText().toString());
+            map.put("Data",data);
 
             JSONObject jsonObject=new JSONObject(map);
             JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
@@ -158,25 +175,37 @@ public class ChatActivity extends AppCompatActivity {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            //Log.i("Output from server: ", response.toString());
-                            //System.out.println("Output from server: "+ response.toString());
-
                             try {
                                 String number= response.getString("MsgType");
                                 String info = response.getString("Info");
-                                System.out.println(number +  "  " + info + " test result ");
                                 if(number.equals("1")) {
 
-                                    Toast.makeText(getApplicationContext(),info,Toast.LENGTH_SHORT).show();
+                                    Log.i("tag"," send successfully!!! "+ data );
+                                    ContentValues values = new ContentValues();
+                                    values.put("Sender",user);
+                                    values.put("Recipient",recipient);
+                                    values.put("Mimetype","text/plain");
+                                    values.put("Data",data);
+                                    //Toast.makeText(getApplicationContext(),info,Toast.LENGTH_SHORT).show();
+                                    //requestMessage_DB(recipient);
+                                    long result = db.insert(Constant.getUserName()+"_"+recipient,null,values);
+                                    if(result>0)
+                                    {
+                                        Toast.makeText(getApplicationContext(),"Successfully",Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        Toast.makeText(getApplicationContext(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                    }
+                                    Message message = new Message(user,recipient,data,"text/plain");
+                                   // Log.i("tag"," send successfully!!! test after "+ message.getData());
+                                    Message_list.add(message);
+                                    addMessage();
 
                                 }
-
                                 else
                                 {
                                     Toast.makeText(getApplicationContext(),"Error: "+info,Toast.LENGTH_SHORT).show();
                                 }
-
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getApplicationContext(),
@@ -198,4 +227,11 @@ public class ChatActivity extends AppCompatActivity {
             VolleyClass.getHttpQueues().add(jsonArrayReq);
         }
     }
+
+    protected void onStart()
+    {
+        super.onStart();
+        Log.i("tag","-----------------------onSTart-------------------------");
+    }
+
 }

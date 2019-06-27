@@ -103,7 +103,7 @@ public class Fragment_list extends Fragment {
         SQLiteDatabase db = helper.getWritableDatabase();
         for(String name : friend_list)
         {
-            String sql= "create table "+Constant.getUserName()+"_"+name+"(_id Integer primary key,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data text)";
+            String sql= "create table "+Constant.getUserName()+"_"+name+"(_id Integer primary key autoincrement,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data text)";
             db.execSQL(sql);
             requestMessage_DB(name);
         }
@@ -284,7 +284,6 @@ public class Fragment_list extends Fragment {
                                     else
                                     {
                                         temp = data.getJSONObject(i);
-                                        values.put("_id",i);
                                         values.put("Sender",temp.get("Sender").toString());
                                         values.put("Recipient",temp.get("Recipient").toString());
                                         values.put("Mimetype",temp.get("Mimetype").toString());
@@ -365,7 +364,6 @@ public class Fragment_list extends Fragment {
                 }
                 addUser();
             }
-           Log.i("tag",friend_list.size() + " test in fragment_list ");
        }
     }
 
