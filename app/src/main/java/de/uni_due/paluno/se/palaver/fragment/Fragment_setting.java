@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,9 @@ public class Fragment_setting extends Fragment {
             @Override
             public void onClick(View v) {
 
+                speicher_editor.putBoolean("login",false);
+                Boolean login = speicher_fragment.getBoolean("login",false);
+                Log.i("tag",login  + " in setting ");
                 Intent test2 =new Intent(getActivity(),MainActivity.class);
                 startActivity(test2);
                 getActivity().finish();
