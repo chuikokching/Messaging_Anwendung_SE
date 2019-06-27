@@ -84,6 +84,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             }
         }
 
+        if(type.equals("location"))
+        {
+            messageViewHolder.leftMessageText.setVisibility(View.INVISIBLE);
+            if(Constant.getUserName().equals(sender))
+            {
+                // Log.i("tag","-----------------------On MessageAdapter-------------inside------------");
+                messageViewHolder.rightMessageText.setBackgroundResource(R.drawable.chat_right);
+                messageViewHolder.rightMessageText.setText(sender + ":"+data);
+            }
+            else {
+                messageViewHolder.rightMessageText.setVisibility(View.INVISIBLE);
+                messageViewHolder.leftMessageText.setVisibility(View.VISIBLE);
+                //Log.i("tag","-----------------------On MessageAdapter-------------outside------------");
+                messageViewHolder.leftMessageText.setBackgroundResource(R.drawable.chat_left);
+                messageViewHolder.leftMessageText.setText(sender+":"+data);
+            }
+        }
+
+
     }
 
     @Override
