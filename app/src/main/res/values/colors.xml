@@ -8,4 +8,8 @@
 
     <color name="endup">#23A7D8</color>
     <color name="colorgrey">#757779</color>
+
+    <color name="mapboxwhite">#ffffff</color>
+    <color name="mapboxblue">#4264fb</color>
+    <color name="mapboxGraylight">#c6d2e1</color>
 </resources>

@@ -130,12 +130,18 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String sender = intent.getExtras().getString("sender");
-            Log.i("tag",  "---------------  test in chatactivity --------------------" + sender);
+            //Log.i("tag",  "---------------  test in chatactivity --------------------" + sender);
             requestMessage_DB(sender);
 
         }
     };
 
+    public void OnClick_location(View v)
+    {
+        Intent test3 =new Intent(this, MapViewActivity.class);
+        startActivity(test3);
+        this.finish();
+    }
 
     public void getMessage_fromDB()
     {

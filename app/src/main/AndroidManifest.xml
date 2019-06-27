@@ -3,6 +3,7 @@
     package="de.uni_due.paluno.se.palaver">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".VolleyClass"
@@ -13,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ChatActivity"></activity>
+        <activity android:name=".MapViewActivity"></activity>
+        <activity android:name=".ChatActivity" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -44,16 +46,13 @@
             </intent-filter>
         </activity>
 
-
-        <service android:name=".Firebase.MyFirebaseMessagingService" android:exported="false">
+        <service
+            android:name=".Firebase.MyFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-
-
-
     </application>
 
 </manifest>

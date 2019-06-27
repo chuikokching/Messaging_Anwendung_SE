@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             else
             {
                 interface1.setVisibility(View.VISIBLE);
-                interface2.setVisibility(View.VISIBLE);
+               interface2.setVisibility(View.VISIBLE);
             }
         }
     };
