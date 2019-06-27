@@ -1,8 +1,10 @@
 package de.uni_due.paluno.se.palaver;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,12 +32,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import de.uni_due.paluno.se.palaver.Adapter.Message;
 import de.uni_due.paluno.se.palaver.Adapter.MessageAdapter;
 import de.uni_due.paluno.se.palaver.Datenbank.Constant;
 import de.uni_due.paluno.se.palaver.Datenbank.DBManager;
 import de.uni_due.paluno.se.palaver.Datenbank.MysqliteHelper;
+import de.uni_due.paluno.se.palaver.Firebase.MyFirebaseMessagingService;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -97,6 +101,8 @@ public class ChatActivity extends AppCompatActivity {
         linearLayoutManager =new LinearLayoutManager(this);
         userMessage_list.setLayoutManager(linearLayoutManager);
 
+        IntentFilter filter = new IntentFilter(MyFirebaseMessagingService.action);
+        registerReceiver(broadcastReceiver, filter);
 
         send_btn = findViewById(R.id.btn_send);
 
@@ -119,6 +125,14 @@ public class ChatActivity extends AppCompatActivity {
         });
 
     }
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("tag",intent.getExtras().getString("data"));
+        }
+    };
+
 
     public void getMessage_fromDB()
     {
@@ -234,4 +248,8 @@ public class ChatActivity extends AppCompatActivity {
         Log.i("tag","-----------------------onSTart-------------------------");
     }
 
+    protected void onDestroy(){
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
 }

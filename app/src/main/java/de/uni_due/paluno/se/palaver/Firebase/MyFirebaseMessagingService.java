@@ -41,6 +41,7 @@ import static android.support.v4.content.ContextCompat.getSystemService;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+    public static final String action = "jason.broadcast.action";
     SharedPreferences speicher_fragment;
 
     public MysqliteHelper helper;
@@ -76,6 +77,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             manager.notify(1,builder.build());
 
             requestMessage_DB(sender);
+
+            Intent intent = new Intent(action);
+            intent.putExtra("data","data from Notification");
+            Log.i("tag","broadcast sent!!!!!!");
+            sendBroadcast(intent);
+
         }
 
     }
@@ -107,8 +114,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         HashMap<String,String> map=new HashMap<>();
         map.put("Username",user);
         map.put("Password",pass);
-
         map.put("Recipient",sender);
+
         JSONObject jsonObject=new JSONObject(map);
         JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
                 Request.Method.POST,
@@ -144,7 +151,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                             //Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
                                         }
                                     }
-
                                 //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
 
@@ -153,7 +159,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                 Log.i("tag","--------------failed----------");
                                 //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -176,6 +181,5 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         jsonArrayReq.setTag("getMessagelist_Request");
         VolleyClass.getHttpQueues().add(jsonArrayReq);
     }
-
 
 }
