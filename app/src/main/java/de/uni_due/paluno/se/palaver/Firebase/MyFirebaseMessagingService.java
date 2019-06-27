@@ -78,8 +78,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             //requestMessage_DB(sender);
 
+            //PendingIntent
             Intent intent = new Intent(action);
             intent.putExtra("sender",sender);
+
            // Log.i("tag","broadcast sent!!!!!!");
             sendBroadcast(intent);
 

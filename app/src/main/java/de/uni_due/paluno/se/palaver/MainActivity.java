@@ -3,6 +3,8 @@ package de.uni_due.paluno.se.palaver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -40,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
     EditText Text1;
     EditText Text2;
-    Boolean loginsave;
 
     RelativeLayout interface1;
     RelativeLayout interface2;
@@ -48,25 +49,21 @@ public class MainActivity extends AppCompatActivity {
     Runnable run1 = new Runnable() {
         @Override
         public void run() {
-            //String user = speicher.getString("username",null);
-            //String pass = speicher.getString("password",null);
-            //Boolean login = speicher.getBoolean("login",false);
-            //Log.i("tag",login  + " in main ");
 
-          //  if(!user.equals("")&&!pass.equals("")&&login)
-           //{
-             //  Intent test2 =new Intent(MainActivity.this, UserInterfaceActivity.class);
-              //  startActivity(test2);
-               // MainActivity.this.finish();
+            ConnectivityManager cm=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo info=cm.getActiveNetworkInfo();
+            if(info==null||!info.isAvailable())
+            {
+              Intent test2 =new Intent(MainActivity.this, UserInterfaceActivity.class);
+                startActivity(test2);
+                MainActivity.this.finish();
+            }
 
-           // }
-            //else
-           //{
+            else
+            {
                 interface1.setVisibility(View.VISIBLE);
                 interface2.setVisibility(View.VISIBLE);
-            //}
-
-
+            }
         }
     };
 
