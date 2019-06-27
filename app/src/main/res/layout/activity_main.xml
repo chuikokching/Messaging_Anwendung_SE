@@ -22,6 +22,7 @@
             android:layout_height="150dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
+
             android:src="@drawable/ic_onepiece"
             android:layout_centerHorizontal="true"
 
@@ -122,8 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layer1"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="55dp"
                 android:background="@drawable/button_bg"
                 android:fontFamily="sans-serif-medium"
                 android:onClick="onClickConnect"
