@@ -134,7 +134,7 @@ public class Fragment_setting extends Fragment {
                                 values.put("_id",have_date());
                                 values.put("name",friend);
                                 long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
-                                String sql= "create table "+Constant.getUserName()+"_"+friend+" (_id Integer primary key ,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data text)";
+                                String sql= "create table "+Constant.getUserName()+"_"+friend+" (_id Integer primary key autoincrement ,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data text)";
                                 db.execSQL(sql);
                                 if(result>0)
                                 {

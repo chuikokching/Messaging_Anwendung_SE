@@ -130,7 +130,7 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String sender = intent.getExtras().getString("sender");
-            Log.i("tag",  "---------------  test in chatactivity --------------------");
+            Log.i("tag",  "---------------  test in chatactivity --------------------" + sender);
             requestMessage_DB(sender);
 
         }
@@ -283,10 +283,10 @@ public class ChatActivity extends AppCompatActivity {
                                     long result = db.insert(Constant.getUserName() + "_" + sender, null, values);
                                     if (result > 0) {
                                         //Log.i("tag", "--------------Successfully in DB----------");
-                                        Toast.makeText(getApplicationContext(),"Successfully",Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getApplicationContext(),"Successfully in DB while inserting newest message",Toast.LENGTH_SHORT).show();
                                     } else {
                                         //Log.i("tag", "--------------failed----------");
-                                        Toast.makeText(getApplicationContext(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getApplicationContext(),"failed"+info,Toast.LENGTH_SHORT).show();
                                     }
 
                                     Message message = new Message(temp.get("Sender").toString(),temp.get("Recipient").toString(),temp.get("Data").toString(),temp.get("Mimetype").toString());
