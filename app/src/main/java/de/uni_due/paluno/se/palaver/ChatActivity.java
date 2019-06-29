@@ -146,6 +146,7 @@ public class ChatActivity extends AppCompatActivity {
         if(requestCode==438&& RESULT_OK == resultCode )
         {
             Uri uri = data.getData();
+            Log.i("tag",uri + " test !!!");
             Cursor cursor = getContentResolver().query(uri, null, null, null,null);
             if (cursor != null && cursor.moveToFirst()) {
                 String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
@@ -206,6 +207,7 @@ public class ChatActivity extends AppCompatActivity {
                                     Message message = new Message(user,recipient,coordinate,"location");
                                     Message_list.add(message);
                                     addMessage();
+                                    //fusedLocationProviderClient.removeLocationUpdates()
                                 }
                                 else
                                 {
@@ -246,6 +248,7 @@ public class ChatActivity extends AppCompatActivity {
             locationRequest.setFastestInterval(15000);
             locationRequest.setInterval(20000);
 
+
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
@@ -259,7 +262,7 @@ public class ChatActivity extends AppCompatActivity {
                     send_locationMessage(lat,lng);
 
                 }
-            }, getMainLooper());
+            },getMainLooper());
         }
         else
         {
@@ -279,7 +282,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onGranted() {
                 // do your task.
-                //requestLocationUpdate();
+                requestLocationUpdate();
             }
 
             @Override
@@ -295,7 +298,7 @@ public class ChatActivity extends AppCompatActivity {
        // Intent test3 =new Intent(this, MapViewActivity.class);
         //startActivity(test3);
         //this.finish();
-       // callPermission();
+       callPermission();
     }
 
     public void OnClick_image(View v)
