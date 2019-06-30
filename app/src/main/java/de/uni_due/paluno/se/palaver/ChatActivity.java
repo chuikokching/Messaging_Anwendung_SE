@@ -11,7 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
+
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -49,7 +49,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
+
 
 import de.uni_due.paluno.se.palaver.Adapter.Message;
 import de.uni_due.paluno.se.palaver.Adapter.MessageAdapter;
@@ -57,7 +57,7 @@ import de.uni_due.paluno.se.palaver.Datenbank.Constant;
 import de.uni_due.paluno.se.palaver.Datenbank.DBManager;
 import de.uni_due.paluno.se.palaver.Datenbank.MysqliteHelper;
 import de.uni_due.paluno.se.palaver.Firebase.MyFirebaseMessagingService;
-import de.uni_due.paluno.se.palaver.Location.LocationUtils;
+
 
 
 public class ChatActivity extends AppCompatActivity implements MessageAdapter.OnMapListener{
@@ -296,20 +296,7 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
 
     public void OnClick_location(View v)
     {
-       //Intent test3 =new Intent(this, MapViewActivity.class);
-        //startActivity(test3);
-       // this.finish();
        callPermission();
-//        String lat = "",lng="";
-//        Location location = LocationUtils.getInstance(this).showLocation();
-//        if (location!=null){
-//            lat = location.getLatitude()+"";
-//            lng = location.getLongitude()+"";
-//            String address = "lat："+location.getLatitude()+"lng："+location.getLongitude();
-//            Log.i("tag",address);
-//        }
-//        send_locationMessage(lat,lng);
-//        LocationUtils.getInstance(this).removeLocationUpdatesListener();
     }
 
     public void OnClick_image(View v)
@@ -553,7 +540,7 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
             intent2.putExtra("lng",coordinates[1]);
             startActivity(intent2);
         }
-       Log.i("tag", "----------------listener in Chatactivity-----------" + position + " "+ coordinates[0] + " " + coordinates[1]);
+      // Log.i("tag", "----------------listener in Chatactivity-----------" + position + " "+ coordinates[0] + " " + coordinates[1]);
 
     }
 }

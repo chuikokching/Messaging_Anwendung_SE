@@ -55,7 +55,7 @@ public class MapViewActivity extends AppCompatActivity {
         intent = getIntent();
         lat = intent.getStringExtra("lat");
         lng = intent.getStringExtra("lng");
-        Log.i("tag", lat + " " + lng + " go probe in map");
+       // Log.i("tag", lat + " " + lng + " go probe in map");
 
         Mapbox.getInstance(this, getString(R.string.access_token));
 
