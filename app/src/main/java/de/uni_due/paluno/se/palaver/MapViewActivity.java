@@ -1,5 +1,6 @@
 package de.uni_due.paluno.se.palaver;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
@@ -17,6 +18,8 @@ import com.mapbox.android.core.location.LocationEngineProvider;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -30,7 +33,7 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
 import java.security.Permission;
 import java.util.List;
 
-public class MapViewActivity extends AppCompatActivity implements OnMapReadyCallback, LocationEngineListener, PermissionsListener {
+public class MapViewActivity extends AppCompatActivity {
 
     TextView maptitle;
     private MapView mapView;
@@ -40,24 +43,49 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
     private LocationLayerPlugin locationLayerPlugin;
     private Location originLocation;
 
+    public String lat="";
+    public String lng="";
+
+    Intent intent ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Mapbox.getInstance(this,getString(R.string.access_token));
+        intent = getIntent();
+        lat = intent.getStringExtra("lat");
+        lng = intent.getStringExtra("lng");
+        Log.i("tag", lat + " " + lng + " go probe in map");
+
+        Mapbox.getInstance(this, getString(R.string.access_token));
 
         setContentView(R.layout.activity_map_view);
 
         mapView =(MapView) findViewById(R.id.mapview);
+        mapView.setStyleUrl("mapbox://styles/mapbox/streets-v10");
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
+
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+
+                LatLng latLng = new LatLng(Double.valueOf(lat), Double.valueOf(lng));
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(latLng.getLatitude(), latLng.getLongitude()))
+                        .build();
+                mapboxMap.animateCamera(CameraUpdateFactory.newLatLng(latLng),2000);
+
+                mapboxMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(latLng.getLatitude(), latLng.getLongitude()))
+                        .title("Your Geolocation")
+                        .snippet("lat:"+lat+" "+"lng:"+lng));
+            }
+        });
 
         Toolbar toolbar1= findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar1);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
 
 
         toolbar1.setNavigationOnClickListener(new View.OnClickListener() {
@@ -68,141 +96,36 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
         });
 
         maptitle = findViewById(R.id.location_chat);
-        maptitle.setText("Mapview");
-    }
-
-
-    @Override
-    public void onMapReady(MapboxMap mapboxMap) {
-        map = mapboxMap;
-        enableLocation();
-    }
-
-    private void enableLocation(){
-        if(PermissionsManager.areLocationPermissionsGranted(this))
-        {
-            //do some stuff
-            initializeLocationEngine();
-            initializeLocationLayer();
-        }
-        else{
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
-        }
-    }
-    @SuppressWarnings("MissingPermission")
-    private void initializeLocationEngine()
-    {
-        locationEngine = new LocationEngineProvider(this).obtainBestLocationEngineAvailable();
-        locationEngine.setPriority(LocationEnginePriority.HIGH_ACCURACY);
-        locationEngine.activate();
-
-        Location lastlocation = locationEngine.getLastLocation();
-        if(lastlocation !=null)
-        {
-            originLocation = lastlocation;
-            setCameraPosition(lastlocation);
-        }
-        else
-        {
-            locationEngine.addLocationEngineListener(this);
-        }
-    }
-    @SuppressWarnings("MissingPermission")
-    private void initializeLocationLayer()
-    {
-        locationLayerPlugin = new LocationLayerPlugin(mapView,map,locationEngine);
-        locationLayerPlugin.setLocationLayerEnabled(true);
-        locationLayerPlugin.setCameraMode(CameraMode.TRACKING);
-        locationLayerPlugin.setRenderMode(RenderMode.NORMAL);
-    }
-
-    private void setCameraPosition(Location location)
-    {
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),
-                location.getLongitude()),13.0));
-        Log.i("tag",location.getLatitude() + " " +location.getLongitude() + " test location" );
-    }
-
-    @SuppressWarnings("MissingPermission")
-    public void onConnected() {
-        locationEngine.requestLocationUpdates();
+        maptitle.setText("MapView");
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        if(location!=null)
-        {
-            originLocation = location;
-            setCameraPosition(location);
-        }
-    }
-
-    @Override
-    public void onExplanationNeeded(List<String> permissionsToExplain) {
-        //Present toast or dialog
-
-    }
-
-    @Override
-    public void onPermissionResult(boolean granted) {
-        if(granted)
-        {
-            enableLocation();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionsManager.onRequestPermissionsResult(requestCode,permissions,grantResults);
-
-    }
-    @SuppressWarnings("MissingPermission")
-    protected void onStart() {
-        super.onStart();
-
-        if(locationEngine!=null)
-        {
-            locationEngine.requestLocationUpdates();
-        }
-        if(locationLayerPlugin!=null)
-        {
-            locationLayerPlugin.onStart();
-        }
-        mapView.onStart();
-    }
-
-    @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         mapView.onResume();
     }
 
+
     @Override
-    protected void onPause() {
-        super.onPause();
-        mapView.onPause();
+    protected void onStart() {
+        super.onStart();
+        mapView.onStart();
     }
+
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (locationEngine != null) {
-            locationEngine.removeLocationUpdates();
-        }
-        if (locationLayerPlugin != null)
-        {
-            locationLayerPlugin.onStop();
-        }
         mapView.onStop();
     }
 
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        mapView.onSaveInstanceState(outState);
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
     }
+
 
     @Override
     public void onLowMemory() {
@@ -210,15 +133,18 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
         mapView.onLowMemory();
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+    }
 
-        if(locationEngine!=null)
-        {
-            locationEngine.deactivate();
-        }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 
 }

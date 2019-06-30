@@ -60,7 +60,7 @@ import de.uni_due.paluno.se.palaver.Firebase.MyFirebaseMessagingService;
 import de.uni_due.paluno.se.palaver.Location.LocationUtils;
 
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements MessageAdapter.OnMapListener{
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
@@ -355,7 +355,7 @@ public class ChatActivity extends AppCompatActivity {
 
     public void addMessage()
     {
-        messageAdapter = new MessageAdapter(Message_list);
+        messageAdapter = new MessageAdapter(Message_list,this);
         userMessage_list.setAdapter(messageAdapter);
 
     }
@@ -523,6 +523,14 @@ public class ChatActivity extends AppCompatActivity {
         Log.i("tag","-----------------------onSTart-------------------------");
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (fusedLocationProviderClient != null) {
+            fusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        }
+    }
+
     protected void onDestroy(){
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
@@ -532,5 +540,20 @@ public class ChatActivity extends AppCompatActivity {
         super.onStop();
         VolleyClass.getHttpQueues().cancelAll("Send_Request");
         VolleyClass.getHttpQueues().cancelAll("SendLocation_Request");
+    }
+
+    @Override
+    public void OnMapClick(int position) {
+        String location = Message_list.get(position).getMimetype();
+        String coordinates[] = Message_list.get(position).getData().split(",");
+        if(location.equals("location"))
+        {
+            Intent  intent2 = new Intent(this,MapViewActivity.class);
+            intent2.putExtra("lat",coordinates[0]);
+            intent2.putExtra("lng",coordinates[1]);
+            startActivity(intent2);
+        }
+       Log.i("tag", "----------------listener in Chatactivity-----------" + position + " "+ coordinates[0] + " " + coordinates[1]);
+
     }
 }

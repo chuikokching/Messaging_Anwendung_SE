@@ -20,6 +20,7 @@ import de.uni_due.paluno.se.palaver.R;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
     public List<Message> userMessage_list;
+    private OnMapListener mOnMapListener;
 
 
     public MessageAdapter()
@@ -27,28 +28,37 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     }
 
-    public MessageAdapter(List<Message> userMessage_list)
+    public MessageAdapter(List<Message> userMessage_list,OnMapListener onMapListener)
     {
         this.userMessage_list=userMessage_list;
+        this.mOnMapListener=onMapListener;
     }
 
 
-    public class MessageViewHolder extends RecyclerView.ViewHolder
+    public class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         public TextView leftMessageText,rightMessageText;
         public ImageView leftImageView,rightImageView;
+        OnMapListener onMapListener;
 
 
-        public MessageViewHolder(@NonNull View itemView)
+        public MessageViewHolder(@NonNull View itemView,OnMapListener onMapListener)
         {
             super(itemView);
 
+            this.onMapListener = onMapListener;
             leftMessageText = (TextView)itemView.findViewById(R.id.receiver);
             rightMessageText = (TextView)itemView.findViewById(R.id.sender);
             leftImageView = (ImageView) itemView.findViewById(R.id.mapbox_left);
             rightImageView = (ImageView) itemView.findViewById(R.id.mapbox_right);
+
+            itemView.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+            onMapListener.OnMapClick(getAdapterPosition());
+        }
     }
 
     @NonNull
@@ -56,7 +66,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.custom_message,viewGroup,false);
-        return new MessageViewHolder(view);
+        return new MessageViewHolder(view,mOnMapListener);
     }
 
     @Override
@@ -68,6 +78,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         String type = message.getMimetype();
         String data = message.getData();
        // Log.i("tag","-----------------------On MessageAdapter-------------------------" + sender +" " + type + data);
+
 
         if(type.equals("text/plain"))
         {
@@ -116,5 +127,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return userMessage_list.size();
     }
 
+    public interface OnMapListener{
+        void OnMapClick(int position);
+    }
 
 }
