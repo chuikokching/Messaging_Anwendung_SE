@@ -6,6 +6,25 @@
     android:padding="10dp"
     >
 
+    <ImageView
+        android:id="@+id/mapbox_left"
+        android:layout_width="146dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/mapbox" />
+
+    <ImageView
+        android:id="@+id/mapbox_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:background="@drawable/mapbox" />
+
 
     <TextView
         android:layout_width="wrap_content"

@@ -39,6 +39,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.firebase:firebase-messaging:17.6.0'
     implementation 'com.nabinbhandari.android:permissions:3.8'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.0.1'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.5.0'
+
 
 }
 apply plugin: 'com.google.gms.google-services'

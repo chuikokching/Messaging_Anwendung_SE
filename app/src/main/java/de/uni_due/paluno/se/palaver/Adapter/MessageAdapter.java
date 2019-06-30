@@ -36,6 +36,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public class MessageViewHolder extends RecyclerView.ViewHolder
     {
         public TextView leftMessageText,rightMessageText;
+        public ImageView leftImageView,rightImageView;
 
 
         public MessageViewHolder(@NonNull View itemView)
@@ -44,6 +45,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             leftMessageText = (TextView)itemView.findViewById(R.id.receiver);
             rightMessageText = (TextView)itemView.findViewById(R.id.sender);
+            leftImageView = (ImageView) itemView.findViewById(R.id.mapbox_left);
+            rightImageView = (ImageView) itemView.findViewById(R.id.mapbox_right);
         }
 
     }
@@ -69,6 +72,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         if(type.equals("text/plain"))
         {
             messageViewHolder.leftMessageText.setVisibility(View.INVISIBLE);
+            messageViewHolder.rightImageView.setVisibility(View.INVISIBLE);
+            messageViewHolder.leftImageView.setVisibility(View.INVISIBLE);
             if(Constant.getUserName().equals(sender))
             {
                // Log.i("tag","-----------------------On MessageAdapter-------------inside------------");
@@ -87,18 +92,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         if(type.equals("location"))
         {
             messageViewHolder.leftMessageText.setVisibility(View.INVISIBLE);
+            messageViewHolder.rightMessageText.setVisibility(View.INVISIBLE);
+            messageViewHolder.leftImageView.setVisibility(View.INVISIBLE);
             if(Constant.getUserName().equals(sender))
             {
                 // Log.i("tag","-----------------------On MessageAdapter-------------inside------------");
-                messageViewHolder.rightMessageText.setBackgroundResource(R.drawable.chat_right);
-                messageViewHolder.rightMessageText.setText(sender + ":"+data);
+                messageViewHolder.rightImageView.setVisibility(View.VISIBLE);
+
             }
             else {
-                messageViewHolder.rightMessageText.setVisibility(View.INVISIBLE);
-                messageViewHolder.leftMessageText.setVisibility(View.VISIBLE);
+                messageViewHolder.rightImageView.setVisibility(View.INVISIBLE);
+                messageViewHolder.leftImageView.setVisibility(View.VISIBLE);
                 //Log.i("tag","-----------------------On MessageAdapter-------------outside------------");
-                messageViewHolder.leftMessageText.setBackgroundResource(R.drawable.chat_left);
-                messageViewHolder.leftMessageText.setText(sender+":"+data);
             }
         }
 
