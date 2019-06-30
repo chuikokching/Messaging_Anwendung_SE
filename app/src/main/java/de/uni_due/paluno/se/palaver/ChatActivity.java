@@ -209,8 +209,8 @@ public class ChatActivity extends AppCompatActivity {
                                     Message message = new Message(user,recipient,coordinate,"location");
                                     Message_list.add(message);
                                     addMessage();
-                                    //fusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
-                                   // Log.i("tag","services terminate.");
+                                    fusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+                                    Log.i("tag","services terminate.");
                                 }
                                 else
                                 {
@@ -238,78 +238,78 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-//    LocationCallback mLocationCallback = new LocationCallback(){
-//        @Override
-//        public void onLocationResult(LocationResult locationResult) {
-//            String lat = locationResult.getLastLocation().getLatitude()+"";
-//            String lng = locationResult.getLastLocation().getLongitude()+"";
-//
-//            Log.i("tag","lat: "+locationResult.getLastLocation().getLatitude());
-//            Log.i("tag","lng: "+locationResult.getLastLocation().getLongitude());
-//            send_locationMessage(lat,lng);
-//        };
-//    };
+    LocationCallback mLocationCallback = new LocationCallback(){
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            String lat = locationResult.getLastLocation().getLatitude()+"";
+            String lng = locationResult.getLastLocation().getLongitude()+"";
 
-//    public void requestLocationUpdate()
-//    {
-//        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)==PermissionChecker.PERMISSION_GRANTED
-//                && ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)==PermissionChecker.PERMISSION_GRANTED)
-//        {
-//            fusedLocationProviderClient = new FusedLocationProviderClient(this);
-//            locationRequest = new LocationRequest();
-//
-//            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//            locationRequest.setFastestInterval(15000);
-//            locationRequest.setInterval(20000);
-//
-//
-//            fusedLocationProviderClient.requestLocationUpdates(locationRequest,mLocationCallback,getMainLooper());
-//        }
-//        else
-//        {
-//            callPermission();
-//        }
-//    }
+            Log.i("tag","lat: "+locationResult.getLastLocation().getLatitude());
+            Log.i("tag","lng: "+locationResult.getLastLocation().getLongitude());
+            send_locationMessage(lat,lng);
+        };
+    };
+
+    public void requestLocationUpdate()
+    {
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)==PermissionChecker.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)==PermissionChecker.PERMISSION_GRANTED)
+        {
+            fusedLocationProviderClient = new FusedLocationProviderClient(this);
+            locationRequest = new LocationRequest();
+
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setFastestInterval(15000);
+            locationRequest.setInterval(20000);
 
 
-//    public void callPermission()
-//    {
-//        String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
-//        String rationale = "Please provide location permission so that you can get User location";
-//        Permissions.Options options = new Permissions.Options()
-//                .setRationaleDialogTitle("location permission")
-//                .setSettingsDialogTitle("Warning");
-//        Permissions.check(this/*context*/, permissions, rationale, options, new PermissionHandler() {
-//            @Override
-//            public void onGranted() {
-//                // do your task.
-//                requestLocationUpdate();
-//            }
-//
-//            @Override
-//            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
-//                // permission denied, block the feature.
-//                callPermission();
-//            }
-//        });
-//    }
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest,mLocationCallback,getMainLooper());
+        }
+        else
+        {
+            callPermission();
+        }
+    }
+
+
+    public void callPermission()
+    {
+        String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+        String rationale = "Please provide location permission so that you can get User location";
+        Permissions.Options options = new Permissions.Options()
+                .setRationaleDialogTitle("location permission")
+                .setSettingsDialogTitle("Warning");
+        Permissions.check(this/*context*/, permissions, rationale, options, new PermissionHandler() {
+            @Override
+            public void onGranted() {
+                // do your task.
+                requestLocationUpdate();
+            }
+
+            @Override
+            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
+                // permission denied, block the feature.
+                callPermission();
+            }
+        });
+    }
 
     public void OnClick_location(View v)
     {
        //Intent test3 =new Intent(this, MapViewActivity.class);
         //startActivity(test3);
        // this.finish();
-       //callPermission();
-        String lat = "",lng="";
-        Location location = LocationUtils.getInstance(this).showLocation();
-        if (location!=null){
-            lat = location.getLatitude()+"";
-            lng = location.getLongitude()+"";
-            String address = "lat："+location.getLatitude()+"lng："+location.getLongitude();
-            Log.i("tag",address);
-        }
-        send_locationMessage(lat,lng);
-        LocationUtils.getInstance(this).removeLocationUpdatesListener();
+       callPermission();
+//        String lat = "",lng="";
+//        Location location = LocationUtils.getInstance(this).showLocation();
+//        if (location!=null){
+//            lat = location.getLatitude()+"";
+//            lng = location.getLongitude()+"";
+//            String address = "lat："+location.getLatitude()+"lng："+location.getLongitude();
+//            Log.i("tag",address);
+//        }
+//        send_locationMessage(lat,lng);
+//        LocationUtils.getInstance(this).removeLocationUpdatesListener();
     }
 
     public void OnClick_image(View v)
