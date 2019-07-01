@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -148,13 +150,96 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         if(requestCode==438&& RESULT_OK == resultCode )
         {
             Uri uri = data.getData();
-            Log.i("tag",uri + " test !!!");
-            Cursor cursor = getContentResolver().query(uri, null, null, null,null);
-            if (cursor != null && cursor.moveToFirst()) {
-                String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] bytes = baos.toByteArray();
+
+                //base64 encode
+                byte[] encode = Base64.encode(bytes,Base64.DEFAULT);
+                String encodeString = new String(encode);
+                sendImage_saveinDB(encodeString);
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
         }
     }
+
+    public void sendImage_saveinDB(String encode)
+    {
+        String url="http://palaver.se.paluno.uni-due.de/api/message/send";
+
+        final SQLiteDatabase db = helper.getWritableDatabase();
+        final String user = speicher_fragment.getString("username", "");
+        final String pass = speicher_fragment.getString("password", "");
+
+        HashMap<String,String> map=new HashMap<>();
+        map.put("Username",user);
+        map.put("Password",pass);
+        map.put("Recipient",recipient);
+        map.put("Mimetype","Image");
+        map.put("Data",encode);
+
+        JSONObject jsonObject=new JSONObject(map);
+        JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String number= response.getString("MsgType");
+                            String info = response.getString("Info");
+                            if(number.equals("1")) {
+                                ContentValues values = new ContentValues();
+                                values.put("Sender",user);
+                                values.put("Recipient",recipient);
+                                values.put("Mimetype","Image");
+                                values.put("Data",encode);
+                                long result = db.insert(Constant.getUserName()+"_"+recipient,null,values);
+                                if(result>0)
+                                {
+                                    //Toast.makeText(getApplicationContext(),"Successfully Image",Toast.LENGTH_SHORT).show();
+                                    //Log.i("tag"," image good !");
+                                }
+                                else {
+                                    // Toast.makeText(getApplicationContext(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                }
+                                Message message = new Message(user,recipient,encode,"Image");
+                                Message_list.add(message);
+                                addMessage();
+                            }
+                            else
+                            {
+                                Toast.makeText(getApplicationContext(),"Error: "+info,Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),
+                                    "Error: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        System.out.println("Output from Error: "+ error.toString());
+                        Toast.makeText(ChatActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+
+                    }
+                });
+        jsonArrayReq.setTag("SendImage_Request");
+        VolleyClass.getHttpQueues().add(jsonArrayReq);
+    }
+
 
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -304,20 +389,7 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, 438);
-        //decode to bitmap
-
-        bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.test);
-
-        //convert to byte array
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] bytes = baos.toByteArray();
-
-        //base64 encode
-        byte[] encode = Base64.encode(bytes,Base64.DEFAULT);
-        String encodeString = new String(encode);
-        Log.i("tag"," chat image : " +encodeString);
+        startActivityForResult(Intent.createChooser(intent, "Select an image"), 438);
 
     }
 
@@ -527,6 +599,7 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         super.onStop();
         VolleyClass.getHttpQueues().cancelAll("Send_Request");
         VolleyClass.getHttpQueues().cancelAll("SendLocation_Request");
+        VolleyClass.getHttpQueues().cancelAll("SendImage_Request");
     }
 
     @Override

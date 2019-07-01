@@ -2,8 +2,11 @@ package de.uni_due.paluno.se.palaver.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +41,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         public TextView leftMessageText,rightMessageText;
-        public ImageView leftImageView,rightImageView;
+        public ImageView leftmapboxView,rightmapboxView,leftPictureView,rightPictureView;
         OnMapListener onMapListener;
 
 
@@ -49,8 +52,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             this.onMapListener = onMapListener;
             leftMessageText = (TextView)itemView.findViewById(R.id.receiver);
             rightMessageText = (TextView)itemView.findViewById(R.id.sender);
-            leftImageView = (ImageView) itemView.findViewById(R.id.mapbox_left);
-            rightImageView = (ImageView) itemView.findViewById(R.id.mapbox_right);
+            leftmapboxView = (ImageView) itemView.findViewById(R.id.mapbox_left);
+            rightmapboxView = (ImageView) itemView.findViewById(R.id.mapbox_right);
+            leftPictureView = (ImageView) itemView.findViewById(R.id.image_left);
+            rightPictureView = (ImageView) itemView.findViewById(R.id.image_right);
 
             itemView.setOnClickListener(this);
         }
@@ -79,12 +84,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         String data = message.getData();
        // Log.i("tag","-----------------------On MessageAdapter-------------------------" + sender +" " + type + data);
 
-
         if(type.equals("text/plain"))
         {
             messageViewHolder.leftMessageText.setVisibility(View.INVISIBLE);
-            messageViewHolder.rightImageView.setVisibility(View.INVISIBLE);
-            messageViewHolder.leftImageView.setVisibility(View.INVISIBLE);
+            messageViewHolder.rightmapboxView.setVisibility(View.INVISIBLE);
+            messageViewHolder.leftmapboxView.setVisibility(View.INVISIBLE);
+            messageViewHolder.leftPictureView.setVisibility(View.INVISIBLE);
+            messageViewHolder.rightPictureView.setVisibility(View.INVISIBLE);
             if(Constant.getUserName().equals(sender))
             {
                // Log.i("tag","-----------------------On MessageAdapter-------------inside------------");
@@ -104,18 +110,48 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         {
             messageViewHolder.leftMessageText.setVisibility(View.INVISIBLE);
             messageViewHolder.rightMessageText.setVisibility(View.INVISIBLE);
-            messageViewHolder.leftImageView.setVisibility(View.INVISIBLE);
+            messageViewHolder.leftmapboxView.setVisibility(View.INVISIBLE);
+            messageViewHolder.leftPictureView.setVisibility(View.INVISIBLE);
+            messageViewHolder.rightPictureView.setVisibility(View.INVISIBLE);
             if(Constant.getUserName().equals(sender))
             {
                 // Log.i("tag","-----------------------On MessageAdapter-------------inside------------");
-                messageViewHolder.rightImageView.setVisibility(View.VISIBLE);
+                messageViewHolder.rightmapboxView.setVisibility(View.VISIBLE);
 
             }
             else {
-                messageViewHolder.rightImageView.setVisibility(View.INVISIBLE);
-                messageViewHolder.leftImageView.setVisibility(View.VISIBLE);
+                messageViewHolder.rightmapboxView.setVisibility(View.INVISIBLE);
+                messageViewHolder.leftmapboxView.setVisibility(View.VISIBLE);
                 //Log.i("tag","-----------------------On MessageAdapter-------------outside------------");
             }
+        }
+
+        if(type.equals("Image"))
+        {
+            messageViewHolder.leftMessageText.setVisibility(View.INVISIBLE);
+            messageViewHolder.rightMessageText.setVisibility(View.INVISIBLE);
+            messageViewHolder.leftmapboxView.setVisibility(View.INVISIBLE);
+            messageViewHolder.rightmapboxView.setVisibility(View.INVISIBLE);
+            messageViewHolder.leftPictureView.setVisibility(View.INVISIBLE);
+            if(Constant.getUserName().equals(sender))
+            {
+                // Log.i("tag","-----------------------On MessageAdapter-------------inside------------");
+                messageViewHolder.rightPictureView.setVisibility(View.VISIBLE);
+                byte[] decodedString = Base64.decode(data, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                messageViewHolder.rightPictureView.setImageBitmap(decodedByte);
+
+            }
+            else {
+                messageViewHolder.rightPictureView.setVisibility(View.INVISIBLE);
+                messageViewHolder.leftPictureView.setVisibility(View.VISIBLE);
+                //Log.i("tag","-----------------------On MessageAdapter-------------outside------------");
+                byte[] decodedString = Base64.decode(data, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                messageViewHolder.leftPictureView.setImageBitmap(decodedByte);
+
+            }
+
         }
 
 
