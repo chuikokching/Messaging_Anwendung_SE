@@ -1,5 +1,6 @@
 package de.uni_due.paluno.se.palaver;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -32,11 +33,19 @@ public class UserInterfaceActivity extends AppCompatActivity implements View.OnC
     private TextView tv_list;
     private TextView tv_setting;
 
+    TextView username;
+
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.userinterface_main);
+
+        username = (TextView)findViewById(R.id.user_userinterface);
+
+        intent = getIntent();
+        username.setText(intent.getStringExtra("username"));
 
         //View Initialization
         InitView();

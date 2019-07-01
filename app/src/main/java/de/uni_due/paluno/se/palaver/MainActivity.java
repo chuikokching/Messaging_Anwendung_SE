@@ -238,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                                         handler.postDelayed(new Runnable() {
                                             public void run() {
                                                 Intent test2 =new Intent(MainActivity.this, UserInterfaceActivity.class);
+                                                test2.putExtra("username",name);
                                                 startActivity(test2);
                                                 MainActivity.this.finish();
                                             }}, 3000); }
