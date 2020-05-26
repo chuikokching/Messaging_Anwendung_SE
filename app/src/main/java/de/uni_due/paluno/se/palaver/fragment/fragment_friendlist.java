@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,11 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import de.uni_due.paluno.se.palaver.Datenbank.Constant;
-import de.uni_due.paluno.se.palaver.Datenbank.DBManager;
-import de.uni_due.paluno.se.palaver.Datenbank.MysqliteHelper;
-import de.uni_due.paluno.se.palaver.VolleyClass;
-import de.uni_due.paluno.se.palaver.Adapter.UserAdapter;
+import de.uni_due.paluno.se.palaver.Volley_Connect;
 import de.uni_due.paluno.se.palaver.R;
 
 import org.json.JSONArray;
@@ -36,9 +31,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Fragment_list extends Fragment {
+public class fragment_friendlist extends Fragment {
 
-    private UserAdapter user;
+/*    private UserAdapter user;
     private List<String> friend_list;
 
     public MysqliteHelper helper;
@@ -231,7 +226,7 @@ public class Fragment_list extends Fragment {
                     }
                 });
         jsonArrayReq.setTag("getfriendlist_Request");
-        VolleyClass.getHttpQueues().add(jsonArrayReq);
+        Volley_Connect.getHttpQueues().add(jsonArrayReq);
     }
 
 
@@ -331,7 +326,7 @@ public class Fragment_list extends Fragment {
                 });
 
         jsonArrayReq.setTag("getMessagelist_Request");
-        VolleyClass.getHttpQueues().add(jsonArrayReq);
+        Volley_Connect.getHttpQueues().add(jsonArrayReq);
 
     }
 
@@ -339,8 +334,8 @@ public class Fragment_list extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        VolleyClass.getHttpQueues().cancelAll("getfriendlist_Request");
-        VolleyClass.getHttpQueues().cancelAll("getMessagelist_Request");
+        Volley_Connect.getHttpQueues().cancelAll("getfriendlist_Request");
+        Volley_Connect.getHttpQueues().cancelAll("getMessagelist_Request");
     }
 
     @Override
@@ -370,5 +365,5 @@ public class Fragment_list extends Fragment {
             }
        }
     }
-
+*/
 }

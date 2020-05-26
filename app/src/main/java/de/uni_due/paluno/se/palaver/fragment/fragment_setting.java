@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +21,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import de.uni_due.paluno.se.palaver.Datenbank.Constant;
-import de.uni_due.paluno.se.palaver.Datenbank.DBManager;
-import de.uni_due.paluno.se.palaver.Datenbank.MysqliteHelper;
 import de.uni_due.paluno.se.palaver.MainActivity;
 
-import de.uni_due.paluno.se.palaver.VolleyClass;
+import de.uni_due.paluno.se.palaver.Volley_Connect;
 import de.uni_due.paluno.se.palaver.R;
 
 import org.json.JSONException;
@@ -36,9 +32,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 
-public class Fragment_setting extends Fragment {
+public class fragment_setting extends Fragment {
 
-    SharedPreferences speicher_fragment;
+ /*   SharedPreferences speicher_fragment;
 
     SharedPreferences.Editor speicher_editor;
 
@@ -159,7 +155,7 @@ public class Fragment_setting extends Fragment {
                     }
                 });
         jsonArrayReq.setTag("Add_Request");
-        VolleyClass.getHttpQueues().add(jsonArrayReq);
+        Volley_Connect.getHttpQueues().add(jsonArrayReq);
 
     }
 
@@ -167,6 +163,8 @@ public class Fragment_setting extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        VolleyClass.getHttpQueues().cancelAll("Add_Request");
+        Volley_Connect.getHttpQueues().cancelAll("Add_Request");
     }
+    */
+
 }

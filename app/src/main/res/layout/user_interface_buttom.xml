@@ -3,12 +3,10 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="45dp"
-    android:background="@drawable/title_tab">
+    android:background="@drawable/tab">
 
-
-   <!--
     <LinearLayout
-        android:id="@+id/line2"
+        android:id="@+id/line_layout_friendlist"
         android:orientation="vertical"
         android:layout_weight="1"
         android:gravity="center"
@@ -17,44 +15,21 @@
 
         <ImageView
             android:layout_weight="1"
-            android:id="@+id/ic_2"
-            android:src="@drawable/wechat_normal"
+            android:id="@+id/icon_list"
+            android:src="@drawable/person"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
         <TextView
-            android:id="@+id/textview_2"
+            android:id="@+id/textview_friendlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="11dp"
             android:textColor="@android:color/black"
-            android:text="Chat"/>
-    </LinearLayout>-->
-
-    <LinearLayout
-        android:id="@+id/line3"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:layout_weight="1"
-            android:id="@+id/ic_3"
-            android:src="@drawable/me_normal"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-        <TextView
-            android:id="@+id/textview_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="11dp"
-            android:textColor="@android:color/black"
-            android:text="List"/>
+            android:text="Friendlist"/>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/line1"
+        android:id="@+id/line_layout_setting"
         android:orientation="vertical"
         android:layout_weight="1"
         android:gravity="center"
@@ -63,16 +38,16 @@
 
         <ImageView
             android:layout_weight="1"
-            android:id="@+id/ic_1"
-            android:src="@drawable/find_normal"
+            android:id="@+id/icon_setting"
+            android:src="@drawable/setting"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
         <TextView
-            android:id="@+id/textview_1"
+            android:id="@+id/textview_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="11dp"
-            android:textColor="@android:color/black"
+            android:textColor="#0E0000"
             android:text="Setting"/>
     </LinearLayout>
 </LinearLayout>

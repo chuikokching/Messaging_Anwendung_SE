@@ -2,14 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.uni_due.paluno.se.palaver">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
     <application
-        android:name=".VolleyClass"
+        android:name=".Volley_Connect"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Pavaler"
@@ -17,30 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MapViewActivity"></activity>
-        <activity android:name=".ChatActivity" />
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_stat_ic_notification" />
-        <!--
- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more.
-        -->
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorAccent" /> <!-- [END fcm_default_icon] -->
-        <!-- [START fcm_default_channel] -->
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="@string/default_notification_channel_id" /> <!-- [END fcm_default_channel] -->
-        <activity
-            android:name=".UserInterfaceActivity" />
-        <activity
-            android:name=".SignupActivity"
-            android:label="@string/title_activity_signup"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Splash_screen"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,13 +20,37 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".Firebase.MyFirebaseMessagingService"
-            android:exported="false">
+        <activity android:name=".User_Interface_Activity" />
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
+        <activity
+            android:name=".SignUpActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" /> <!-- [END fcm_default_icon] -->
+        <!-- [START fcm_default_channel] -->
+        <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </service>
+        </activity> <!-- [END fcm_default_channel] -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
     </application>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
