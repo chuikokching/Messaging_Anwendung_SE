@@ -20,6 +20,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import de.uni_due.paluno.se.palaver.Adapter.Friendlist_adapter;
+import de.uni_due.paluno.se.palaver.Datenbank.SQliteManager;
+import de.uni_due.paluno.se.palaver.Datenbank.SQlite_Operation_Manager;
+import de.uni_due.paluno.se.palaver.Datenbank.SQlite_Version_Manager;
 import de.uni_due.paluno.se.palaver.Volley_Connect;
 import de.uni_due.paluno.se.palaver.R;
 
@@ -33,12 +37,12 @@ import java.util.List;
 
 public class fragment_friendlist extends Fragment {
 
-/*    private UserAdapter user;
+    private Friendlist_adapter list;
     private List<String> friend_list;
 
-    public MysqliteHelper helper;
+    public SQliteManager helper;
 
-    public RecyclerView mCollectRecyclerView;
+    public RecyclerView friendlist_RecyclerView;
 
     SharedPreferences speicher_fragment;
 
@@ -49,9 +53,9 @@ public class fragment_friendlist extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-        mCollectRecyclerView = view.findViewById(R.id.collect_recyclerView);
-        mCollectRecyclerView.setHasFixedSize(true);
-        mCollectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        friendlist_RecyclerView = view.findViewById(R.id.collect_recyclerView);
+        friendlist_RecyclerView.setHasFixedSize(true);
+        friendlist_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         speicher_fragment = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
         speicher_editor = speicher_fragment.edit();
@@ -59,42 +63,37 @@ public class fragment_friendlist extends Fragment {
         friend_list = new ArrayList<>();
         String user = speicher_fragment.getString("username", "");
 
-        Constant.setUserName(user);
+        SQlite_Version_Manager.setTable_name(user);
 
-        helper = DBManager.getInstance(this.getContext());
+         helper= SQlite_Operation_Manager.newInstance(this.getContext());
 
-        if(have_db())
+        if(exist_database())
         {
-            if(have_date())
+            if(exist_data())
             {
-                getFriendslist_fromDB();
+                get_Friendslist_from_DataBase();
             }
             else
             {
-                volley_getFriendslist();
+                get_Friendslist_from_volley();
             }
-
         }
-        if(!have_db())
+        if(!exist_database())
         {
-            createDB();
-
-            volley_getFriendslist();
+            create_DataBase();
+            get_Friendslist_from_volley();
         }
-
-
         return view;
     }
 
-    public void createDB(){
+    public void create_DataBase(){
         SQLiteDatabase db = helper.getWritableDatabase();
-        String sql= "create table "+Constant.getUserName()+"_friendlist(_id Integer primary key,name varchar(40))";
+        String sql= "create table "+SQlite_Version_Manager.getTable_name()+"_friendlist(_id Integer primary key,name varchar(40))";
         db.execSQL(sql);
-
-
+        System.out.println(" db has been created!!!! ");
     }
 
-    public void createMessage_DB(){
+   /* public void createMessage_DB(){
         SQLiteDatabase db = helper.getWritableDatabase();
         for(String name : friend_list)
         {
@@ -102,13 +101,12 @@ public class fragment_friendlist extends Fragment {
             db.execSQL(sql);
             requestMessage_DB(name);
         }
+    }*/
 
-    }
-
-    public boolean have_date(){
+    public boolean exist_data(){
         Cursor cursor ;
         SQLiteDatabase db = helper.getWritableDatabase();
-        cursor=db.query(Constant.getUserName()+"_friendlist",null,null,null,null,null,null);
+        cursor=db.query(SQlite_Version_Manager.getTable_name()+"_friendlist",null,null,null,null,null,null);
 
         if(cursor.getCount()>0)
             return true;
@@ -116,10 +114,10 @@ public class fragment_friendlist extends Fragment {
             return false;
     }
 
-    public int have_dateint(){
+    public int exist_new_friends(){
         Cursor cursor ;
         SQLiteDatabase db = helper.getWritableDatabase();
-        cursor=db.query(Constant.getUserName()+"_friendlist",null,null,null,null,null,null);
+        cursor=db.query(SQlite_Version_Manager.getTable_name()+"_friendlist",null,null,null,null,null,null);
 
         if(cursor.getCount()>0)
             return cursor.getCount();
@@ -127,7 +125,7 @@ public class fragment_friendlist extends Fragment {
             return 0;
     }
 
-    public boolean have_db(){
+    public boolean exist_database(){
         boolean test = false ;
         SQLiteDatabase db = helper.getWritableDatabase();
         Cursor cursor;
@@ -136,23 +134,22 @@ public class fragment_friendlist extends Fragment {
         while (cursor.moveToNext())
         {
             String name = cursor.getString(0);
-            if(name.equals(Constant.getUserName()+"_friendlist"))
+            if(name.equals(SQlite_Version_Manager.getTable_name()+"_friendlist"))
             {
                 test = true;
                 break;
             }
         }
-        //Log.i("tag",test + " test in fragment 1!!");
         return test;
     }
 
     public void addUser(){
 
-        user= new UserAdapter(getContext(),friend_list);
-        mCollectRecyclerView.setAdapter(user);
+        list= new Friendlist_adapter(getContext(),friend_list);
+        friendlist_RecyclerView.setAdapter(list);
     }
 
-    public void volley_getFriendslist()
+    public void get_Friendslist_from_volley()
     {
         final SQLiteDatabase db = helper.getWritableDatabase();
         String user = speicher_fragment.getString("username", "");
@@ -164,7 +161,6 @@ public class fragment_friendlist extends Fragment {
         map.put("Username",user);
         map.put("Password",pass);
 
-
         JSONObject jsonObject=new JSONObject(map);
         JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
                 Request.Method.POST,
@@ -173,43 +169,36 @@ public class fragment_friendlist extends Fragment {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
                         try {
                             String number= response.getString("MsgType");
                             String info = response.getString("Info");
-
                             JSONArray data = response.getJSONArray("Data");
-
                             if(number.equals("1")) {
-
                                 if(data.length()!=0)
                                 {
                                     ContentValues values = new ContentValues();
                                     for (int i=0; i<data.length(); i++){
                                         values.put("_id",i);
                                         values.put("name",data.getString(i));
-                                        long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
+                                        long result = db.insert(SQlite_Version_Manager.getTable_name()+"_friendlist",null,values);
                                         if(result>0)
                                         {
-                                            // Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
                                         }
                                         else {
-                                            // Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
                                         }
                                     }
-                                    getFriendslist_fromDB();
-                                    createMessage_DB();
+                                    get_Friendslist_from_DataBase();
+                                    //createMessage_DB();
                                     // createMessage_DB();
                                     //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                                 }
                             }
-
                             else
                             {
                                 Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getActivity(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -226,27 +215,25 @@ public class fragment_friendlist extends Fragment {
                     }
                 });
         jsonArrayReq.setTag("getfriendlist_Request");
-        Volley_Connect.getHttpQueues().add(jsonArrayReq);
+        Volley_Connect.getVolleyQueues().add(jsonArrayReq);
     }
 
 
-    public void getFriendslist_fromDB()
+    public void get_Friendslist_from_DataBase()
     {
         SQLiteDatabase db = helper.getWritableDatabase();
-
-        Cursor cursor = db.query(Constant.getUserName()+"_friendlist",null,null,null,null,null,null);
-
+        //query all the data of the entire table to cursor
+        Cursor cursor = db.query(SQlite_Version_Manager.getTable_name()+"_friendlist",null,null,null,null,null,null);
         while(cursor.moveToNext())
         {
             String name = cursor.getString(cursor.getColumnIndex("name"));
             friend_list.add(name);
         }
         addUser();
-
     }
 
 
-    public void requestMessage_DB(final String recipient)
+    /*public void requestMessage_DB(final String recipient)
     {
         String user = speicher_fragment.getString("username", "");
         String pass = speicher_fragment.getString("password", "");
@@ -299,16 +286,12 @@ public class fragment_friendlist extends Fragment {
                                         }
                                     }
                                 }
-
                                 Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
-
                             else
                             {
                                 Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                             }
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getActivity(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -324,46 +307,45 @@ public class fragment_friendlist extends Fragment {
 
                     }
                 });
-
         jsonArrayReq.setTag("getMessagelist_Request");
         Volley_Connect.getHttpQueues().add(jsonArrayReq);
 
-    }
+    }*/
 
 
     @Override
     public void onStop() {
         super.onStop();
-        Volley_Connect.getHttpQueues().cancelAll("getfriendlist_Request");
-        Volley_Connect.getHttpQueues().cancelAll("getMessagelist_Request");
+        Volley_Connect.getVolleyQueues().cancelAll("getfriendlist_Request");
+        //Volley_Connect.getVolleyQueues().cancelAll("getMessagelist_Request");
     }
-
+    /**
+     *  Refresh fragment, after friend's addition.
+     * @param hidden not displayed onPause(), else displayed onResume();
+     */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (hidden) {   // not displayed onPause();
+        if (hidden) {
             Log.i("tag","-----OnHidden-------");
 
-        }else{  // displayed onResume();
-
-            if(!(friend_list.size()==have_dateint()))
+            if(!(friend_list.size()==exist_new_friends()))
             {
                 SQLiteDatabase db = helper.getWritableDatabase();
-                String sql = "select * from "+Constant.getUserName()+"_friendlist";
-                Cursor cursor = db.rawQuery(sql, null);
+                String sql = "select * from "+SQlite_Version_Manager.getTable_name()+"_friendlist";
+                Cursor cursor = db.rawQuery(sql, null);// //query all the data of the entire table to cursor
 
                 while(cursor.moveToNext())
                 {
-                    if(cursor.getInt(cursor.getColumnIndex("_id"))==(have_dateint()-1))
+                    if(cursor.getInt(cursor.getColumnIndex("_id"))==(exist_new_friends()-1))
                     {
                         String name = cursor.getString(cursor.getColumnIndex("name"));
                         friend_list.add(name);
                     }
-
                 }
                 addUser();
             }
        }
     }
-*/
+
 }

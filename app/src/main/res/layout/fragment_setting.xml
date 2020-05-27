@@ -11,7 +11,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nickname here."
+        android:hint="Nickname"
         android:id="@+id/nickname_friend_add"
         />
 
@@ -24,15 +24,13 @@
         android:text="Add friends" />
 
     <Button
-        android:id="@+id/button_logout"
+        android:id="@+id/button_sign_out"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@drawable/button_shape"
-        android:text="log out"
+        android:text="Sign out"
         android:textColor="#f5f0f0"
         android:layout_below="@id/button_friend_add"/>
-
-
 
 </LinearLayout>

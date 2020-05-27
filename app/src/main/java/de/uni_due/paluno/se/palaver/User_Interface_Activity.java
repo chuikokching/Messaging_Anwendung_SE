@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,10 +56,22 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
         //Fragment
         Init_Fragment(2);
 
-        //default situation
+        //initial
         image_list.setImageResource(R.drawable.person_green);
         tv_list.setTextColor(getResources().getColor(R.color.colorAccent));
 
+    }
+
+    //HideAllfragment
+    private void hideAllFragment(android.support.v4.app.FragmentTransaction transaction)
+    {
+        if (frag_list != null){
+            transaction.hide(frag_list);
+        }
+
+        if (frag_setting!= null){
+            transaction.hide(frag_setting);
+        }
     }
 
     public void Init_Fragment(int index)
@@ -68,13 +81,14 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         //hide all Fragment
-        // hideAllFragment(transaction);
+        hideAllFragment(transaction);
         switch (index){
 
             case 2:
                 if (frag_list == null){
                     frag_list = new fragment_friendlist();
                     transaction.add(R.id.frame_content,frag_list);
+                    //System.out.println(" friendlist ");
                 }
                 else{
                     transaction.show(frag_list);
@@ -85,6 +99,7 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
                 if (frag_setting == null){
                     frag_setting = new fragment_setting();
                     transaction.add(R.id.frame_content,frag_setting);
+                    //System.out.println(" setting ");
                 }
                 else{
                     transaction.show(frag_setting);
@@ -112,12 +127,14 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
                 image_list.setImageResource(R.drawable.person_green);
                 tv_list.setTextColor(getResources().getColor(R.color.colorgreen));
                 Init_Fragment(2);
+                //System.out.println(" friendlist 2 ");
                 break;
 
             case R.id.line_layout_setting:
                 image_setting.setImageResource(R.drawable.setting_green);
                 tv_setting.setTextColor(getResources().getColor(R.color.colorgreen));
                 Init_Fragment(3);
+                //System.out.println(" setting 2 ");
                 break;
         }
     }
@@ -134,7 +151,7 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
     public void Init_View()
     {
 
-        image_list =findViewById(R.id.icon_list);
+        image_list =findViewById(R.id.icon_friendlist);
         image_setting= findViewById(R.id.icon_setting);
 
         linear_list = findViewById(R.id.line_layout_friendlist);
