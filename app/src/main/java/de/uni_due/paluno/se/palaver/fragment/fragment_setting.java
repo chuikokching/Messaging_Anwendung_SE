@@ -116,10 +116,13 @@ public class fragment_setting extends Fragment {
                                values.put("_id",number_of_rows());
                                values.put("name",friend);
                                long result = db.insert(SQlite_Version_Manager.getTable_name()+"_friendlist",null,values);
-                            //    String sql= "create table "+Constant.getUserName()+"_"+friend+" (_id Integer primary key autoincrement ,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data text)";
-                             //   db.execSQL(sql);
-                              //  Toast.makeText(getActivity(),"Update DB Successfully",Toast.LENGTH_SHORT).show();
-                                Toast.makeText(getActivity(),message,Toast.LENGTH_SHORT).show();
+                               if(result>0)
+                               {
+                                   Toast.makeText(getActivity(),"Update DB Successfully and "+message ,Toast.LENGTH_SHORT).show();
+                               }
+                                else {
+                                        Toast.makeText(getActivity(),"failed: "+message,Toast.LENGTH_SHORT).show();
+                               }
                             }
                             else
                             {

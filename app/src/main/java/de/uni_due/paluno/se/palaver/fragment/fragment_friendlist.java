@@ -93,15 +93,6 @@ public class fragment_friendlist extends Fragment {
         System.out.println(" db has been created!!!! ");
     }
 
-   /* public void createMessage_DB(){
-        SQLiteDatabase db = helper.getWritableDatabase();
-        for(String name : friend_list)
-        {
-            String sql= "create table "+Constant.getUserName()+"_"+name+"(_id Integer primary key autoincrement,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data text)";
-            db.execSQL(sql);
-            requestMessage_DB(name);
-        }
-    }*/
 
     public boolean exist_data(){
         Cursor cursor ;
@@ -191,16 +182,13 @@ public class fragment_friendlist extends Fragment {
                                         long result = db.insert(SQlite_Version_Manager.getTable_name()+"_friendlist",null,values);
                                         if(result>0)
                                         {
-                                            Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(),"Update DB Successfully",Toast.LENGTH_SHORT).show();
                                         }
                                         else {
                                             Toast.makeText(getActivity(),"failed: "+info,Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                     get_Friendslist_from_DataBase();
-                                    //createMessage_DB();
-                                    // createMessage_DB();
-                                    //Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
                                 }
                             }
                             else
@@ -240,85 +228,6 @@ public class fragment_friendlist extends Fragment {
         addUser();
     }
 
-
-    /*public void requestMessage_DB(final String recipient)
-    {
-        String user = speicher_fragment.getString("username", "");
-        String pass = speicher_fragment.getString("password", "");
-        final SQLiteDatabase db = helper.getWritableDatabase();
-
-        String url="http://palaver.se.paluno.uni-due.de/api/message/get";
-
-        HashMap<String,String> map=new HashMap<>();
-        map.put("Username",user);
-        map.put("Password",pass);
-
-        map.put("Recipient",recipient);
-        JSONObject jsonObject=new JSONObject(map);
-        JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
-                Request.Method.POST,
-                url,
-                jsonObject,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String number= response.getString("MsgType");
-                            String info = response.getString("Info");
-                            JSONArray data = response.getJSONArray("Data");
-                            ContentValues values = new ContentValues();
-                            if(number.equals("1")) {
-                                JSONObject temp = null;
-                                for(int i=0;i<data.length();i++)
-                                {
-                                    if(data.length() == 0)
-                                    {
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        temp = data.getJSONObject(i);
-                                        values.put("Sender",temp.get("Sender").toString());
-                                        values.put("Recipient",temp.get("Recipient").toString());
-                                        values.put("Mimetype",temp.get("Mimetype").toString());
-                                        values.put("Data",temp.get("Data").toString());
-
-                                        //Log.i("tag",data.length() +" "+temp.get("Sender").toString()+" "+temp.get("Recipient")+" "+ temp.get("Data").toString());
-                                        long result = db.insert(Constant.getUserName()+"_"+recipient,null,values);
-                                        if(result>0)
-                                        {
-                                            Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
-                                        }
-                                        else {
-                                            Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }
-                                Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Toast.makeText(getActivity(),"Info: "+info,Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getActivity(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //VolleyLog.d(TAG, "Error: " + error.getMessage());
-                        System.out.println("Output from Error: "+ error.toString());
-                        Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
-
-                    }
-                });
-        jsonArrayReq.setTag("getMessagelist_Request");
-        Volley_Connect.getHttpQueues().add(jsonArrayReq);
-
-    }*/
 
 
     @Override
