@@ -114,6 +114,10 @@ public class fragment_friendlist extends Fragment {
             return false;
     }
 
+    /**
+     * check whether there is a new friend.
+     * @return number of friends that user have after addition.
+     */
     public int exist_new_friends(){
         Cursor cursor ;
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -125,8 +129,12 @@ public class fragment_friendlist extends Fragment {
             return 0;
     }
 
+    /**
+     * check database exists or not.
+     * @return
+     */
     public boolean exist_database(){
-        boolean test = false ;
+        boolean temp = false ;
         SQLiteDatabase db = helper.getWritableDatabase();
         Cursor cursor;
         String sql = "select name from sqlite_master where type='table'";
@@ -136,11 +144,11 @@ public class fragment_friendlist extends Fragment {
             String name = cursor.getString(0);
             if(name.equals(SQlite_Version_Manager.getTable_name()+"_friendlist"))
             {
-                test = true;
+                temp = true;
                 break;
             }
         }
-        return test;
+        return temp;
     }
 
     public void addUser(){
@@ -186,7 +194,7 @@ public class fragment_friendlist extends Fragment {
                                             Toast.makeText(getActivity(),"Successfully",Toast.LENGTH_SHORT).show();
                                         }
                                         else {
-                                            Toast.makeText(getActivity(),"failed"+info,Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(),"failed: "+info,Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                     get_Friendslist_from_DataBase();
@@ -319,6 +327,7 @@ public class fragment_friendlist extends Fragment {
         Volley_Connect.getVolleyQueues().cancelAll("getfriendlist_Request");
         //Volley_Connect.getVolleyQueues().cancelAll("getMessagelist_Request");
     }
+
     /**
      *  Refresh fragment, after friend's addition.
      * @param hidden not displayed onPause(), else displayed onResume();

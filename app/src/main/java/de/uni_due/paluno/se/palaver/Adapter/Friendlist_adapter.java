@@ -32,6 +32,8 @@ public class Friendlist_adapter extends RecyclerView.Adapter<Friendlist_adapter.
 
     @Override
     public void onBindViewHolder(@NonNull Friendlist_adapter.ViewHolder viewHolder, int i) {
+        viewHolder.username.setText(adapter_friend_list.get(i));
+        viewHolder.profile_image.setImageResource(R.drawable.ic_face_black_24dp);
 
     }
 

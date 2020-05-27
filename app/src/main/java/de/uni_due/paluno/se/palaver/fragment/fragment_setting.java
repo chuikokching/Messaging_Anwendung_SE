@@ -21,6 +21,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import de.uni_due.paluno.se.palaver.Datenbank.SQliteManager;
+import de.uni_due.paluno.se.palaver.Datenbank.SQlite_Operation_Manager;
+import de.uni_due.paluno.se.palaver.Datenbank.SQlite_Version_Manager;
 import de.uni_due.paluno.se.palaver.MainActivity;
 
 import de.uni_due.paluno.se.palaver.Volley_Connect;
@@ -38,7 +41,7 @@ public class fragment_setting extends Fragment {
 
     SharedPreferences.Editor speicher_editor;
 
-    //public MysqliteHelper helper;
+    public SQliteManager helper;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,9 +61,9 @@ public class fragment_setting extends Fragment {
 
         String user = speicher_fragment.getString("username", "");
 
-        //Constant.setUserName(user);
+        SQlite_Version_Manager.setTable_name(user);
 
-       // helper = DBManager.getInstance(this.getContext());
+        helper = SQlite_Operation_Manager.newInstance(this.getContext());
 
         button_signout.setOnClickListener(v -> {
             Intent test2 =new Intent(getActivity(),MainActivity.class);
@@ -69,7 +72,7 @@ public class fragment_setting extends Fragment {
         });
 
         button_addfriends.setOnClickListener(v -> {
-            volley_add(v,nickname);
+            volley_add_friend(v,nickname);
             nickname.setText("");
         });
 
@@ -77,9 +80,9 @@ public class fragment_setting extends Fragment {
 
 
 
-    public void volley_add(View v,EditText nickname)
+    public void volley_add_friend(View v,EditText nickname)
     {
-       // final SQLiteDatabase db = helper.getWritableDatabase();
+        final SQLiteDatabase db = helper.getWritableDatabase();
         speicher_fragment= getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
         speicher_editor=speicher_fragment.edit();
 
@@ -109,10 +112,10 @@ public class fragment_setting extends Fragment {
                             String message= response.getString("Info");
 
                             if(number.equals("1")) {
-                               // ContentValues values = new ContentValues();
-                              //  values.put("_id",have_date());
-                              //  values.put("name",friend);
-                             //   long result = db.insert(Constant.getUserName()+"_friendlist",null,values);
+                               ContentValues values = new ContentValues();
+                               values.put("_id",number_of_rows());
+                               values.put("name",friend);
+                               long result = db.insert(SQlite_Version_Manager.getTable_name()+"_friendlist",null,values);
                             //    String sql= "create table "+Constant.getUserName()+"_"+friend+" (_id Integer primary key autoincrement ,Sender varchar(20),Recipient varchar(20),Mimetype varchar(20),Data text)";
                              //   db.execSQL(sql);
                               //  Toast.makeText(getActivity(),"Update DB Successfully",Toast.LENGTH_SHORT).show();
@@ -142,16 +145,20 @@ public class fragment_setting extends Fragment {
 
     }
 
-    /*public int have_date(){
+    /**
+     * calculate rows in a table
+     * @return number of rows
+     */
+    public int number_of_rows(){
         Cursor cursor ;
         SQLiteDatabase db = helper.getWritableDatabase();
-        cursor=db.query(Constant.getUserName()+"_friendlist",null,null,null,null,null,null);
+        cursor=db.query(SQlite_Version_Manager.getTable_name()+"_friendlist",null,null,null,null,null,null);
 
         if(cursor.getCount()>0)
             return cursor.getCount();
         else
             return 0;
-    }*/
+    }
 
     @Override
     public void onStop() {
