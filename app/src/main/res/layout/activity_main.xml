@@ -16,10 +16,11 @@
         >
 
         <ImageView
-            android:layout_width="111dp"
-            android:layout_height="91dp"
+            android:layout_width="114dp"
+            android:layout_height="73dp"
             android:layout_gravity="center"
-            android:src="@drawable/onepiece" />
+            android:layout_margin="20dp"
+            android:src="@drawable/logo" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,19 +29,8 @@
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:textSize="50dp"
-            />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Presented by Xu and Zhu"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:layout_marginTop="22dp"
-            android:textSize="17dp"
+            android:textSize="50dp"
             />
 
         <EditText
@@ -52,7 +42,7 @@
             android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_account_box"
             android:drawablePadding="8dp"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="40dp"
             android:background="@drawable/edit"
             android:padding="10dp"
             />
@@ -67,34 +57,51 @@
             android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_keyboard"
             android:drawablePadding="8dp"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/edit"
             android:padding="10dp"
             />
 
-        <Button
-            android:id="@+id/login"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/buttom"
-            android:onClick="onClickLog_in"
-            android:text="Login"
-            android:textColor="#51C7FD" />
+            android:orientation="horizontal"
+            android:layout_margin="20dp">
 
-        <Button
-            android:id="@+id/register"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
+            <Button
+                android:id="@+id/login"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginRight="25dp"
+                android:layout_gravity="center"
+                android:background="@drawable/buttom"
+                android:onClick="onClickLog_in"
+                android:text="Login"
+                android:textColor="#51C7FD" />
+
+            <Button
+                android:id="@+id/register"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="25dp"
+                android:layout_gravity="center"
+                android:background="@drawable/buttom"
+                android:onClick="onClickSignUp_Activity"
+                android:text="Register"
+                android:textColor="#51C7FD" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/buttom"
-            android:onClick="onClickSignUp_Activity"
-            android:text="Register"
-            android:textColor="#51C7FD" />
+            android:layout_marginTop="150dp"
+            android:text="Designed by Xu and Zhu"
+            android:textColor="#FFFFFF"
+            android:textSize="15dp"
+            android:textStyle="bold" />
 
     </LinearLayout>
-
 
 </LinearLayout>

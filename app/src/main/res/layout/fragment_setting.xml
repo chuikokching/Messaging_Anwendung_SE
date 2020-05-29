@@ -19,7 +19,7 @@
         android:id="@+id/button_friend_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_shape"
+        android:background="@drawable/button_shape_blue"
         android:textColor="#f5f0f0"
         android:text="Add friend" />
 
@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@drawable/button_shape"
+        android:background="@drawable/button_shape_red"
         android:text="Sign out"
         android:textColor="#f5f0f0"
         android:layout_below="@id/button_friend_add"/>

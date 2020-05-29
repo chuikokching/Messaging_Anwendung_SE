@@ -15,8 +15,6 @@
         android:layout_gravity="center"
         >
 
-
-
         <EditText
             android:id="@+id/username_signup"
             android:layout_width="350dp"
@@ -41,7 +39,7 @@
             android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_keyboard"
             android:drawablePadding="8dp"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/edit"
             android:padding="10dp"
             />
@@ -56,34 +54,43 @@
             android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_keyboard"
             android:drawablePadding="8dp"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/edit"
             android:padding="10dp"
             />
 
-        <Button
-            android:id="@+id/sign_up_register"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Register"
-            android:onClick="onClickRegister"
-            android:textColor="#51C7FD"
-            android:background="@drawable/buttom"
-            android:layout_marginTop="50dp"
-            />
+            android:orientation="horizontal"
+            android:layout_margin="20dp">
 
-        <Button
-            android:id="@+id/back_to_main"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:text="Back"
-            android:textColor="#51C7FD"
-            android:onClick="onClickBack"
-            android:background="@drawable/buttom"
-            android:layout_marginTop="20dp"
-            />
+            <Button
+                android:id="@+id/sign_up_register"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginRight="25dp"
+                android:layout_gravity="center"
+                android:text="Register"
+                android:onClick="onClickRegister"
+                android:textColor="#51C7FD"
+                android:background="@drawable/buttom"
+                />
+
+            <Button
+                android:id="@+id/back_to_main"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="25dp"
+                android:layout_gravity="center"
+                android:text="Back"
+                android:textColor="#51C7FD"
+                android:onClick="onClickBack"
+                android:background="@drawable/buttom"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 
