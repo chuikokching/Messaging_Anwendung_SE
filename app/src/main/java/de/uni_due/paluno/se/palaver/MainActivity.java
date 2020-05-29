@@ -1,6 +1,5 @@
 package de.uni_due.paluno.se.palaver;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,13 +26,11 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-
 public class MainActivity extends AppCompatActivity {
 
     Handler change=new Handler();
 
     private static final String TAG = "MainActivity";
-
 
     SharedPreferences speicher;
     SharedPreferences.Editor speicher_Editor;
@@ -152,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
                                         change.postDelayed(new Runnable() {
                                             public void run() {
                                                 Intent test2 =new Intent(MainActivity.this, User_Interface_Activity.class);
-                                                test2.putExtra("username",name);
                                                 startActivity(test2);
                                                 MainActivity.this.finish();
                                             }}, 3000); }

@@ -64,7 +64,7 @@
         <Button
             android:id="@+id/sign_up_register"
             android:layout_width="150dp"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
             android:text="Register"
             android:onClick="onClickRegister"
@@ -76,13 +76,13 @@
         <Button
             android:id="@+id/back_to_main"
             android:layout_width="150dp"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
             android:text="Back"
             android:textColor="#51C7FD"
             android:onClick="onClickBack"
             android:background="@drawable/buttom"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="20dp"
             />
 
     </LinearLayout>

@@ -1,6 +1,8 @@
 package de.uni_due.paluno.se.palaver;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -44,8 +46,10 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
         setContentView(R.layout.user_interface_main);
 
         username =findViewById(R.id.username_interface_activity);
-        Intent intent = getIntent();
-        username.setText(intent.getStringExtra("username"));
+
+        SharedPreferences speicher = getSharedPreferences("loginUser", Context.MODE_PRIVATE);
+        String name = speicher.getString("username", "");
+        username.setText(name);
 
         //View Initialization
         Init_View();

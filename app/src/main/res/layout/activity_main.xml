@@ -16,16 +16,26 @@
         >
 
         <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:src="@drawable/onepiece"
+            android:layout_width="111dp"
+            android:layout_height="91dp"
             android:layout_gravity="center"
+            android:src="@drawable/onepiece" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PALAVER"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:textSize="50dp"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Presented by Zhu and Xu"
+            android:text="Presented by Xu and Zhu"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:layout_gravity="center"
@@ -65,26 +75,24 @@
         <Button
             android:id="@+id/login"
             android:layout_width="150dp"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
-            android:text="Login"
-            android:onClick="onClickLog_in"
-            android:textColor="#51C7FD"
-            android:background="@drawable/buttom"
             android:layout_marginTop="50dp"
-            />
+            android:background="@drawable/buttom"
+            android:onClick="onClickLog_in"
+            android:text="Login"
+            android:textColor="#51C7FD" />
 
         <Button
             android:id="@+id/register"
             android:layout_width="150dp"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
-            android:text="Register"
-            android:onClick="onClickSignUp_Activity"
-            android:textColor="#51C7FD"
+            android:layout_marginTop="20dp"
             android:background="@drawable/buttom"
-            android:layout_marginTop="60dp"
-            />
+            android:onClick="onClickSignUp_Activity"
+            android:text="Register"
+            android:textColor="#51C7FD" />
 
     </LinearLayout>
 

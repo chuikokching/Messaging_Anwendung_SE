@@ -37,7 +37,7 @@ import java.util.HashMap;
 
 public class fragment_setting extends Fragment {
 
-   SharedPreferences speicher_fragment;
+    SharedPreferences speicher_fragment;
 
     SharedPreferences.Editor speicher_editor;
 
@@ -66,6 +66,7 @@ public class fragment_setting extends Fragment {
         helper = SQlite_Operation_Manager.newInstance(this.getContext());
 
         button_signout.setOnClickListener(v -> {
+            speicher_editor.clear().commit();
             Intent test2 =new Intent(getActivity(),MainActivity.class);
             startActivity(test2);
             getActivity().finish();
@@ -77,8 +78,6 @@ public class fragment_setting extends Fragment {
         });
 
     }
-
-
 
     public void volley_add_friend(View v,EditText nickname)
     {

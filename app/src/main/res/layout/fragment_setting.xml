@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_shape"
         android:textColor="#f5f0f0"
-        android:text="Add friends" />
+        android:text="Add friend" />
 
     <Button
         android:id="@+id/button_sign_out"
