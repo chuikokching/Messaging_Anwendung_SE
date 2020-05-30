@@ -2,8 +2,8 @@ package de.uni_due.paluno.se.palaver;
 
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class Splash_screen extends AppCompatActivity {
 
@@ -15,8 +15,8 @@ public class Splash_screen extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i= new Intent(Splash_screen.this, MainActivity.class);
-                startActivity(i);
+                Intent mainActivityIntent = new Intent(getApplication(), MainActivity.class);
+                startActivity(mainActivityIntent);
                 finish();
             }
         }, 3000);

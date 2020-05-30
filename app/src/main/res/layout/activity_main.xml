@@ -76,7 +76,6 @@
                 android:layout_marginRight="25dp"
                 android:layout_gravity="center"
                 android:background="@drawable/buttom"
-                android:onClick="onClickLog_in"
                 android:text="Login"
                 android:textColor="#51C7FD" />
 
@@ -87,7 +86,6 @@
                 android:layout_marginLeft="25dp"
                 android:layout_gravity="center"
                 android:background="@drawable/buttom"
-                android:onClick="onClickSignUp_Activity"
                 android:text="Register"
                 android:textColor="#51C7FD" />
         </LinearLayout>

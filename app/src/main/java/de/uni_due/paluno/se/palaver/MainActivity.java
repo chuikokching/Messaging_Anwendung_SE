@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -27,42 +27,62 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+    Button login_button;
+    Button register_button;
 
-    Handler change=new Handler();
+    EditText username_text;
+    EditText password_text;
 
-    private static final String TAG = "MainActivity";
+    SharedPreferences loginUser_SP;
+    SharedPreferences.Editor loginUser_SP_Editor;
 
-    SharedPreferences speicher;
-    SharedPreferences.Editor speicher_Editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        speicher= getSharedPreferences("loginUser", Context.MODE_PRIVATE);
-        speicher_Editor=speicher.edit();
+        login_button = findViewById(R.id.login);
+        register_button = findViewById(R.id.register);
+
+        username_text = findViewById(R.id.username_signin);
+        password_text = findViewById(R.id.password_signin);
+
+        loginUser_SP = getSharedPreferences("loginUser", Context.MODE_PRIVATE);
+        loginUser_SP_Editor = loginUser_SP.edit();
+
+        login_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickLog_in(v);
+            }
+        });
+
+        register_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent signUpIntent = new Intent(getApplication(), SignUpActivity.class);
+                startActivity(signUpIntent);
+                finish();
+            }
+        });
     }
 
-    public void onClickSignUp_Activity(View v){
-        Intent test1 =new Intent(MainActivity.this, SignUpActivity.class);
-        startActivity(test1);
-        MainActivity.this.finish();
-    }
-
+    @Override
     protected void onStop() {
         super.onStop();
         Volley_Connect.getVolleyQueues().cancelAll("Login_Request");
         Volley_Connect.getVolleyQueues().cancelAll("PushToken_Request");
     }
 
-    public void onClickLog_in(View v)
+    /**
+     * Log in
+     * @param v View
+     */
+    private void onClickLog_in(View v)
     {
-        String login_url="http://palaver.se.paluno.uni-due.de/api/user/validate";
-        EditText text1=findViewById(R.id.username_signin);
-        EditText text2=findViewById(R.id.password_signin);
-
-        final String name=text1.getText().toString();
-        final String pass=text2.getText().toString();
+        final String login_url="http://palaver.se.paluno.uni-due.de/api/user/validate";
+        final String name=username_text.getText().toString();
+        final String pass=password_text.getText().toString();
 
         HashMap<String,String> map=new HashMap<>();
         map.put("Username",name);
@@ -77,28 +97,24 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            String number= response.getString("MsgType");
+                            String msgType = response.getString("MsgType");
                             String message = response.getString("Info");
-                            if(number.equals("1"))
-                            {
-                                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
-                                autoLogin(name,pass);
-                                getToken();
-                            }
-                            else
-                            {
-                                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
+                            if (Integer.parseInt(msgType) == 1) {
+                                Toast.makeText(MainActivity.this.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                save_SP(name, pass);
+                                //getAndSendToken();
+                            } else {
+                                Toast.makeText(MainActivity.this.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this.getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        System.out.println("Output from Error: "+ error.toString());
                         Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
                     }
                 });
@@ -106,85 +122,75 @@ public class MainActivity extends AppCompatActivity {
         Volley_Connect.getVolleyQueues().add(jsonArrayReq);
     }
 
+    /**
+     * save the information of user in Handy
+     * @param name The username
+     * @param pass The password
+     */
+    private void save_SP(String name,String pass){
+        loginUser_SP_Editor.putBoolean("login",true);
+        loginUser_SP_Editor.putString("username", name);
+        loginUser_SP_Editor.putString("password", pass);
+        loginUser_SP_Editor.commit();
+    }
 
-    public void getToken(){
-
+    /**
+     * get and send Token
+     */
+    private void getAndSendToken(){
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
             @Override
             public void onComplete(@NonNull Task<InstanceIdResult> task) {
                 if (!task.isSuccessful()) {
-                    Log.d(TAG, "getInstanceId failed", task.getException());
                     return;
                 }
                 // new Instance ID token
                 String token = task.getResult().getToken();
-                // Log and toast
-                //String msg = R.string.msg_token_fmt+token;
-                Log.d(TAG, token);
-                //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                //pushToken(token);
-                String url="http://palaver.se.paluno.uni-due.de/api/user/pushtoken";
-                final String name=speicher.getString("username",null);
-                String pass=speicher.getString("password",null);
 
-                HashMap<String,String> map=new HashMap<>();
-                map.put("Username",name);
-                map.put("Password",pass);
-                map.put("PushToken",token);
+                final String pushTokenUrl = "http://palaver.se.paluno.uni-due.de/api/user/pushtoken";
+                final String name = loginUser_SP.getString("username", "");
+                final String pass = loginUser_SP.getString("password", "");
 
-                JSONObject jsonObject=new JSONObject(map);
-                JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
+                HashMap<String, String> map = new HashMap<>();
+                map.put("Username", name);
+                map.put("Password", pass);
+                map.put("PushToken", token);
+
+                JSONObject jsonObject = new JSONObject(map);
+                JsonObjectRequest jsonArrayReq = new JsonObjectRequest(
                         Request.Method.POST,
-                        url,
+                        pushTokenUrl,
                         jsonObject,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
-                                    String number= response.getString("MsgType");
-                                    //String info = response.getString("Info");
-                                    if(number.equals("1"))
-                                    {
-                                        //Toast.makeText(getApplicationContext(),info,Toast.LENGTH_SHORT).show();
-                                        change.postDelayed(new Runnable() {
-                                            public void run() {
-                                                Intent test2 =new Intent(MainActivity.this, User_Interface_Activity.class);
-                                                startActivity(test2);
-                                                MainActivity.this.finish();
-                                            }}, 3000); }
-                                    else
-                                    {
-                                        Toast.makeText(getApplicationContext(),"PushToken isn't successful!",Toast.LENGTH_SHORT).show();
+                                    String msgType = response.getString("MsgType");
+                                    String info = response.getString("Info");
+                                    if (Integer.parseInt(msgType) == 1) {
+                                        Toast.makeText(MainActivity.this.getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                                        Intent userInterfaceActivityIntent = new Intent(MainActivity.this, User_Interface_Activity.class);
+                                        MainActivity.this.startActivity(userInterfaceActivityIntent);
+                                        MainActivity.this.finish();
+                                    } else {
+                                        Toast.makeText(MainActivity.this.getApplicationContext(), "PushToken isn't successful!", Toast.LENGTH_SHORT).show();
                                     }
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this.getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                 }
                             }
                         },
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                //VolleyLog.d(TAG, "Error: " + error.getMessage());
-                                System.out.println("Output from Error: "+ error.toString());
                                 Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
-
                             }
                         });
                 jsonArrayReq.setTag("Pushtoken_Request");
                 Volley_Connect.getVolleyQueues().add(jsonArrayReq);
             }
         });
-    }
-
-    private void autoLogin(String name,String pass){
-
-        speicher_Editor.putBoolean("login",true);
-        speicher_Editor.putString("username", name);
-        speicher_Editor.putString("password", pass);
-
-        speicher_Editor.commit();
-
     }
 }

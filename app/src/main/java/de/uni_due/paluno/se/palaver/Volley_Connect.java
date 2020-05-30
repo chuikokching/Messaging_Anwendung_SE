@@ -1,7 +1,5 @@
 package de.uni_due.paluno.se.palaver;
 
-
-
 import android.app.Application;
 
 import com.android.volley.RequestQueue;

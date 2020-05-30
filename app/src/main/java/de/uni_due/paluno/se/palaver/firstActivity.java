@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class firstActivity extends AppCompatActivity {
     @Override
@@ -14,16 +15,16 @@ public class firstActivity extends AppCompatActivity {
         setContentView(R.layout.activity_first);
 
         // prüfen, ob schon eingeloggt ist
-        SharedPreferences speicher = getSharedPreferences("loginUser", Context.MODE_PRIVATE);
-        boolean isLogin = speicher.getBoolean("login", false);
+        SharedPreferences loginUser_SP = getSharedPreferences("loginUser", Context.MODE_PRIVATE);
+        boolean isLogin = loginUser_SP.getBoolean("login", false);
 
         if(isLogin == false) {
-            Intent intent = new Intent(this, Splash_screen.class);
-            startActivity(intent);
+            Intent splashScreenIntent = new Intent(this, Splash_screen.class);
+            startActivity(splashScreenIntent);
             finish();
         } else {
-            Intent intent = new Intent(this, User_Interface_Activity.class);
-            startActivity(intent);
+            Intent userInterfaceActivityIntent = new Intent(this, User_Interface_Activity.class);
+            startActivity(userInterfaceActivityIntent);
             finish();
         }
     }

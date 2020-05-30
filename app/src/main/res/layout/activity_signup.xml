@@ -73,7 +73,6 @@
                 android:layout_marginRight="25dp"
                 android:layout_gravity="center"
                 android:text="Register"
-                android:onClick="onClickRegister"
                 android:textColor="#51C7FD"
                 android:background="@drawable/buttom"
                 />
@@ -86,7 +85,6 @@
                 android:layout_gravity="center"
                 android:text="Back"
                 android:textColor="#51C7FD"
-                android:onClick="onClickBack"
                 android:background="@drawable/buttom"
                 />
 

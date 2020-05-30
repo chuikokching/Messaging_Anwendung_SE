@@ -8,13 +8,14 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -36,11 +37,8 @@ import java.util.HashMap;
 
 
 public class fragment_setting extends Fragment {
-
     SharedPreferences speicher_fragment;
-
     SharedPreferences.Editor speicher_editor;
-
     public SQliteManager helper;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +50,7 @@ public class fragment_setting extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        EditText nickname = getActivity().findViewById(R.id.nickname_friend_add);
+        final EditText nickname = getActivity().findViewById(R.id.nickname_friend_add);
         Button button_signout= getActivity().findViewById(R.id.button_sign_out);
         Button button_addfriends= getActivity().findViewById(R.id.button_friend_add);
 
@@ -65,20 +63,30 @@ public class fragment_setting extends Fragment {
 
         helper = SQlite_Operation_Manager.newInstance(this.getContext());
 
-        button_signout.setOnClickListener(v -> {
-            speicher_editor.clear().commit();
-            Intent test2 =new Intent(getActivity(),MainActivity.class);
-            startActivity(test2);
-            getActivity().finish();
+        button_signout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                speicher_editor.clear().commit();
+                Intent test2 = new Intent(fragment_setting.this.getActivity(), MainActivity.class);
+                fragment_setting.this.startActivity(test2);
+                fragment_setting.this.getActivity().finish();
+            }
         });
 
-        button_addfriends.setOnClickListener(v -> {
-            volley_add_friend(v,nickname);
-            nickname.setText("");
+        button_addfriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragment_setting.this.volley_add_friend(v, nickname);
+                nickname.setText("");
+            }
         });
 
     }
 
+    /**
+     * @param v View
+     * @param nickname Name of friend
+     */
     public void volley_add_friend(View v,EditText nickname)
     {
         final SQLiteDatabase db = helper.getWritableDatabase();
@@ -87,7 +95,6 @@ public class fragment_setting extends Fragment {
 
         String user = speicher_fragment.getString("username", "");
         String pass = speicher_fragment.getString("password", "");
-        //Toast.makeText(getActivity(), "successfully", Toast.LENGTH_LONG).show();
 
         final String friend=nickname.getText().toString();
         String url="http://palaver.se.paluno.uni-due.de/api/friends/add";

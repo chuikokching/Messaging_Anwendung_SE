@@ -6,14 +6,15 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -65,7 +66,7 @@ public class fragment_friendlist extends Fragment {
 
         SQlite_Version_Manager.setTable_name(user);
 
-         helper= SQlite_Operation_Manager.newInstance(this.getContext());
+        helper= SQlite_Operation_Manager.newInstance(this.getContext());
 
         if(exist_database())
         {
@@ -92,7 +93,6 @@ public class fragment_friendlist extends Fragment {
         db.execSQL(sql);
         System.out.println(" db has been created!!!! ");
     }
-
 
     public boolean exist_data(){
         Cursor cursor ;
