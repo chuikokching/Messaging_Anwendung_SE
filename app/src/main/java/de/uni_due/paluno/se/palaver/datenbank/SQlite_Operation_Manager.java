@@ -1,4 +1,4 @@
-package de.uni_due.paluno.se.palaver.Datenbank;
+package de.uni_due.paluno.se.palaver.datenbank;
 
 import android.content.Context;
 

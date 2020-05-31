@@ -21,12 +21,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import de.uni_due.paluno.se.palaver.Adapter.Friendlist_adapter;
-import de.uni_due.paluno.se.palaver.Datenbank.SQliteManager;
-import de.uni_due.paluno.se.palaver.Datenbank.SQlite_Operation_Manager;
-import de.uni_due.paluno.se.palaver.Datenbank.SQlite_Version_Manager;
+import de.uni_due.paluno.se.palaver.adapter.Friendlist_adapter;
+import de.uni_due.paluno.se.palaver.datenbank.SQliteManager;
+import de.uni_due.paluno.se.palaver.datenbank.SQlite_Operation_Manager;
+import de.uni_due.paluno.se.palaver.datenbank.SQlite_Version_Manager;
 import de.uni_due.paluno.se.palaver.Volley_Connect;
 import de.uni_due.paluno.se.palaver.R;
+import de.uni_due.paluno.se.palaver.defineOfClass.Friend;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +50,24 @@ public class fragment_friendlist extends Fragment {
 
     SharedPreferences.Editor speicher_editor;
 
+    public interface MyListClickListener {
+        void onFriendClicked(Friend friend);
+    }
 
+    private MyListClickListener myCallback;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            myCallback = (MyListClickListener) context;
+        } catch (Exception e) {
+            throw new ClassCastException(context.toString() + " muss NavigationFragment.MyClickListener implementieren!");
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 

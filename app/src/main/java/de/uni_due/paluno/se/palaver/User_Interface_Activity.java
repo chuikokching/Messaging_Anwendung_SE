@@ -13,19 +13,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import de.uni_due.paluno.se.palaver.defineOfClass.Friend;
+import de.uni_due.paluno.se.palaver.fragment.fragment_chat;
 import de.uni_due.paluno.se.palaver.fragment.fragment_friendlist;
 import de.uni_due.paluno.se.palaver.fragment.fragment_setting;
 
-public class User_Interface_Activity extends AppCompatActivity implements View.OnClickListener {
+public class User_Interface_Activity extends AppCompatActivity implements View.OnClickListener, fragment_friendlist.MyListClickListener {
 
     TextView username;
-    private ViewPager viewPage_Main;
 
     private Fragment frag_list;
     private Fragment frag_setting;
@@ -39,11 +35,14 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
     private LinearLayout linear_list;
     private LinearLayout linear_setting;
 
-    private List<String> mTitle_list= new ArrayList<>(Arrays.asList("Chat","Setting"));
+    private boolean dualPaneMode;
+    private FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_interface_main);
+        fragmentManager = getSupportFragmentManager();
 
         username =findViewById(R.id.username_interface_activity);
 
@@ -92,7 +91,6 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
                 if (frag_list == null){
                     frag_list = new fragment_friendlist();
                     transaction.add(R.id.frame_content,frag_list);
-                    //System.out.println(" friendlist ");
                 }
                 else{
                     transaction.show(frag_list);
@@ -103,7 +101,6 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
                 if (frag_setting == null){
                     frag_setting = new fragment_setting();
                     transaction.add(R.id.frame_content,frag_setting);
-                    //System.out.println(" setting ");
                 }
                 else{
                     transaction.show(frag_setting);
@@ -116,45 +113,36 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
     }
 
     private void Init_clickEvent(){
-
         linear_list.setOnClickListener(this);
         linear_setting.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-
         restartButton();
         switch (view.getId()){
-
             case R.id.line_layout_friendlist:
                 image_list.setImageResource(R.drawable.person_green);
                 tv_list.setTextColor(getResources().getColor(R.color.colorgreen));
                 Init_Fragment(2);
-                //System.out.println(" friendlist 2 ");
                 break;
-
             case R.id.line_layout_setting:
                 image_setting.setImageResource(R.drawable.setting_green);
                 tv_setting.setTextColor(getResources().getColor(R.color.colorgreen));
                 Init_Fragment(3);
-                //System.out.println(" setting 2 ");
                 break;
         }
     }
 
     private void restartButton(){
-
         image_setting.setImageResource(R.drawable.setting);
         image_list.setImageResource(R.drawable.person);
-
         tv_setting.setTextColor(getResources().getColor(R.color.colorgrey));
         tv_list.setTextColor(getResources().getColor(R.color.colorgrey));
     }
 
     public void Init_View()
     {
-
         image_list =findViewById(R.id.icon_friendlist);
         image_setting= findViewById(R.id.icon_setting);
 
@@ -163,5 +151,16 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
 
         tv_list =  findViewById(R.id.textview_friendlist);
         tv_setting =  findViewById(R.id.textview_setting);
+    }
+
+
+    @Override
+    public void onFriendClicked(Friend friend) {
+        if (findViewById(R.id.dual_chat_container) != null) {
+            Intent intent = Chat_Activity.newIntent(this, friend.getNickName(), false);
+            startActivity(intent);
+        } else {
+            fragmentManager.beginTransaction().replace(R.id.dual_chat_container, new fragment_chat()).commit();
+        }
     }
 }

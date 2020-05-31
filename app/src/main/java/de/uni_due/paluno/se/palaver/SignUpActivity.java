@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -24,6 +23,8 @@ public class SignUpActivity extends AppCompatActivity {
     Button sign_up_button;
     Button back_button;
 
+    final String REGISTER_REQUEST_TAG = "Register_Request";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,16 +36,16 @@ public class SignUpActivity extends AppCompatActivity {
         sign_up_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SignUpActivity.this.volley_SignUp(v);
+                volley_SignUp(v);
             }
         });
 
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent test = new Intent(SignUpActivity.this, MainActivity.class);
-                SignUpActivity.this.startActivity(test);
-                SignUpActivity.this.finish();
+                Intent test = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(test);
+                finish();
             }
         });
     }
@@ -55,7 +56,7 @@ public class SignUpActivity extends AppCompatActivity {
      */
     public void volley_SignUp(View v)
     {
-        String signup_url="http://palaver.se.paluno.uni-due.de/api/user/register";
+        String signUp_url="http://palaver.se.paluno.uni-due.de/api/user/register";
         EditText Text_username=findViewById(R.id.username_signup);
         EditText Text_password_1=findViewById(R.id.password_signup1);
         EditText Text_password_2=findViewById(R.id.password_signup2);
@@ -70,14 +71,14 @@ public class SignUpActivity extends AppCompatActivity {
         }
         else
         {
-            HashMap<String,String> map=new HashMap<>();
-            map.put("Username",Text_username.getText().toString());
-            map.put("Password",Text_password_1.getText().toString());
+            HashMap<String,String> signUpMap=new HashMap<>();
+            signUpMap.put("Username",Text_username.getText().toString());
+            signUpMap.put("Password",Text_password_1.getText().toString());
 
-            JSONObject jsonObject=new JSONObject(map);
+            JSONObject jsonObject=new JSONObject(signUpMap);
             JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
                     Request.Method.POST,
-                    signup_url,
+                    signUp_url,
                     jsonObject,
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -87,20 +88,20 @@ public class SignUpActivity extends AppCompatActivity {
                                 String message = response.getString("Info");
 
                                 if (Integer.parseInt(number) == 1) {
-                                    Toast.makeText(SignUpActivity.this.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                                     new Handler().postDelayed(new Runnable() {
                                         public void run() {
-                                            Intent main_intent = new Intent(SignUpActivity.this, MainActivity.class);
+                                            Intent main_intent = new Intent(getApplicationContext(), MainActivity.class);
                                             startActivity(main_intent);
                                             SignUpActivity.this.finish();
                                         }
                                     }, 1000);
                                 } else {
-                                    Toast.makeText(SignUpActivity.this.getApplicationContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(SignUpActivity.this.getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         }
                     },
@@ -108,10 +109,10 @@ public class SignUpActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             System.out.println("Output from Error: " + error.toString());
-                            Toast.makeText(SignUpActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
                         }
                     });
-            jsonArrayReq.setTag("Register_Request");
+            jsonArrayReq.setTag(REGISTER_REQUEST_TAG);
             Volley_Connect.getVolleyQueues().add(jsonArrayReq);
         }
     }

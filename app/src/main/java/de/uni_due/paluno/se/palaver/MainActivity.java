@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences loginUser_SP;
     SharedPreferences.Editor loginUser_SP_Editor;
 
+    final String LOGIN_REQUEST_TAG = "Login_Request";
+    final String PUSHTOKEN_REQUEST_TAG = "PushToken_Request";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Volley_Connect.getVolleyQueues().cancelAll("Login_Request");
-        Volley_Connect.getVolleyQueues().cancelAll("PushToken_Request");
+        Volley_Connect.getVolleyQueues().cancelAll(LOGIN_REQUEST_TAG);
+        Volley_Connect.getVolleyQueues().cancelAll(PUSHTOKEN_REQUEST_TAG);
     }
 
     /**
@@ -80,18 +83,18 @@ public class MainActivity extends AppCompatActivity {
      */
     private void onClickLog_in(View v)
     {
-        final String login_url="http://palaver.se.paluno.uni-due.de/api/user/validate";
+        final String logIn_url="http://palaver.se.paluno.uni-due.de/api/user/validate";
         final String name=username_text.getText().toString();
         final String pass=password_text.getText().toString();
 
-        HashMap<String,String> map=new HashMap<>();
-        map.put("Username",name);
-        map.put("Password",pass);
+        HashMap<String,String> loginMap=new HashMap<>();
+        loginMap.put("Username",name);
+        loginMap.put("Password",pass);
 
-        JSONObject jsonObject=new JSONObject(map);
+        JSONObject jsonObject=new JSONObject(loginMap);
         JsonObjectRequest jsonArrayReq=new JsonObjectRequest(
                 Request.Method.POST,
-                login_url,
+                logIn_url,
                 jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -100,25 +103,25 @@ public class MainActivity extends AppCompatActivity {
                             String msgType = response.getString("MsgType");
                             String message = response.getString("Info");
                             if (Integer.parseInt(msgType) == 1) {
-                                Toast.makeText(MainActivity.this.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                                 save_SP(name, pass);
-                                //getAndSendToken();
+                                getAndSendToken();
                             } else {
-                                Toast.makeText(MainActivity.this.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(MainActivity.this.getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
                     }
                 });
-        jsonArrayReq.setTag("Login_Request");
+        jsonArrayReq.setTag(LOGIN_REQUEST_TAG);
         Volley_Connect.getVolleyQueues().add(jsonArrayReq);
     }
 
@@ -151,12 +154,12 @@ public class MainActivity extends AppCompatActivity {
                 final String name = loginUser_SP.getString("username", "");
                 final String pass = loginUser_SP.getString("password", "");
 
-                HashMap<String, String> map = new HashMap<>();
-                map.put("Username", name);
-                map.put("Password", pass);
-                map.put("PushToken", token);
+                HashMap<String, String> tokenMap = new HashMap<>();
+                tokenMap.put("Username", name);
+                tokenMap.put("Password", pass);
+                tokenMap.put("PushToken", token);
 
-                JSONObject jsonObject = new JSONObject(map);
+                JSONObject jsonObject = new JSONObject(tokenMap);
                 JsonObjectRequest jsonArrayReq = new JsonObjectRequest(
                         Request.Method.POST,
                         pushTokenUrl,
@@ -168,27 +171,26 @@ public class MainActivity extends AppCompatActivity {
                                     String msgType = response.getString("MsgType");
                                     String info = response.getString("Info");
                                     if (Integer.parseInt(msgType) == 1) {
-                                        Toast.makeText(MainActivity.this.getApplicationContext(), info, Toast.LENGTH_SHORT).show();
-                                        Intent userInterfaceActivityIntent = new Intent(MainActivity.this, User_Interface_Activity.class);
-                                        MainActivity.this.startActivity(userInterfaceActivityIntent);
-                                        MainActivity.this.finish();
+                                        Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                                        Intent userInterfaceActivityIntent = new Intent(getApplicationContext(), User_Interface_Activity.class);
+                                        startActivity(userInterfaceActivityIntent);
+                                        finish();
                                     } else {
-                                        Toast.makeText(MainActivity.this.getApplicationContext(), "PushToken isn't successful!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "PushToken isn't successful!", Toast.LENGTH_SHORT).show();
                                     }
-
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    Toast.makeText(MainActivity.this.getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                 }
                             }
                         },
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
-                jsonArrayReq.setTag("Pushtoken_Request");
+                jsonArrayReq.setTag(PUSHTOKEN_REQUEST_TAG);
                 Volley_Connect.getVolleyQueues().add(jsonArrayReq);
             }
         });

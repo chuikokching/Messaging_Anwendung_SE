@@ -1,4 +1,4 @@
-package de.uni_due.paluno.se.palaver.Datenbank;
+package de.uni_due.paluno.se.palaver.datenbank;
 
 public class SQlite_Version_Manager {
     public static final String DATABASE_NAME="palaver.db";

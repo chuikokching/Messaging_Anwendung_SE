@@ -22,9 +22,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import de.uni_due.paluno.se.palaver.Datenbank.SQliteManager;
-import de.uni_due.paluno.se.palaver.Datenbank.SQlite_Operation_Manager;
-import de.uni_due.paluno.se.palaver.Datenbank.SQlite_Version_Manager;
+import de.uni_due.paluno.se.palaver.datenbank.SQliteManager;
+import de.uni_due.paluno.se.palaver.datenbank.SQlite_Operation_Manager;
+import de.uni_due.paluno.se.palaver.datenbank.SQlite_Version_Manager;
 import de.uni_due.paluno.se.palaver.MainActivity;
 
 import de.uni_due.paluno.se.palaver.Volley_Connect;

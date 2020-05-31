@@ -1,4 +1,4 @@
-package de.uni_due.paluno.se.palaver.Adapter;
+package de.uni_due.paluno.se.palaver.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
