@@ -24,7 +24,7 @@
             android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_account_box"
             android:drawablePadding="8dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="50dp"
             android:background="@drawable/edit"
             android:padding="10dp"
             />
@@ -60,7 +60,7 @@
             />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="horizontal"
@@ -70,19 +70,21 @@
                 android:id="@+id/sign_up_register"
                 android:layout_width="150dp"
                 android:layout_height="50dp"
-                android:layout_marginRight="25dp"
-                android:layout_gravity="center"
+                android:layout_weight="1"
                 android:text="Register"
                 android:textColor="#51C7FD"
                 android:background="@drawable/buttom"
                 />
 
+            <View
+                android:layout_width="50dp"
+                android:layout_height="0dp" />
+
             <Button
                 android:id="@+id/back_to_main"
                 android:layout_width="150dp"
                 android:layout_height="50dp"
-                android:layout_marginLeft="25dp"
-                android:layout_gravity="center"
+                android:layout_weight="1"
                 android:text="Back"
                 android:textColor="#51C7FD"
                 android:background="@drawable/buttom"

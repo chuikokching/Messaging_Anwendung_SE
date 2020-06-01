@@ -14,12 +14,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import de.uni_due.paluno.se.palaver.defineOfClass.Friend;
-import de.uni_due.paluno.se.palaver.fragment.fragment_chat;
 import de.uni_due.paluno.se.palaver.fragment.fragment_friendlist;
 import de.uni_due.paluno.se.palaver.fragment.fragment_setting;
 
-public class User_Interface_Activity extends AppCompatActivity implements View.OnClickListener, fragment_friendlist.MyListClickListener {
+public class User_Interface_Activity extends AppCompatActivity implements View.OnClickListener{
 
     TextView username;
 
@@ -35,14 +33,10 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
     private LinearLayout linear_list;
     private LinearLayout linear_setting;
 
-    private boolean dualPaneMode;
-    private FragmentManager fragmentManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_interface_main);
-        fragmentManager = getSupportFragmentManager();
 
         username =findViewById(R.id.username_interface_activity);
 
@@ -151,16 +145,5 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
 
         tv_list =  findViewById(R.id.textview_friendlist);
         tv_setting =  findViewById(R.id.textview_setting);
-    }
-
-
-    @Override
-    public void onFriendClicked(Friend friend) {
-        if (findViewById(R.id.dual_chat_container) != null) {
-            Intent intent = Chat_Activity.newIntent(this, friend.getNickName(), false);
-            startActivity(intent);
-        } else {
-            fragmentManager.beginTransaction().replace(R.id.dual_chat_container, new fragment_chat()).commit();
-        }
     }
 }

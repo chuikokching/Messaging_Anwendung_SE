@@ -27,7 +27,6 @@ import de.uni_due.paluno.se.palaver.datenbank.SQlite_Operation_Manager;
 import de.uni_due.paluno.se.palaver.datenbank.SQlite_Version_Manager;
 import de.uni_due.paluno.se.palaver.Volley_Connect;
 import de.uni_due.paluno.se.palaver.R;
-import de.uni_due.paluno.se.palaver.defineOfClass.Friend;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,21 +49,9 @@ public class fragment_friendlist extends Fragment {
 
     SharedPreferences.Editor speicher_editor;
 
-    public interface MyListClickListener {
-        void onFriendClicked(Friend friend);
-    }
-
-    private MyListClickListener myCallback;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        try {
-            myCallback = (MyListClickListener) context;
-        } catch (Exception e) {
-            throw new ClassCastException(context.toString() + " muss NavigationFragment.MyClickListener implementieren!");
-        }
     }
 
     @Override
