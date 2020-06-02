@@ -2,6 +2,7 @@ package de.uni_due.paluno.se.palaver.fragment;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,7 +23,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import de.uni_due.paluno.se.palaver.adapter.Friendlist_adapter;
+import de.uni_due.paluno.se.palaver.Chat_Activity;
+import de.uni_due.paluno.se.palaver.adapter.FriendListAdapter;
 import de.uni_due.paluno.se.palaver.datenbank.SQliteManager;
 import de.uni_due.paluno.se.palaver.datenbank.SQlite_Operation_Manager;
 import de.uni_due.paluno.se.palaver.datenbank.SQlite_Version_Manager;
@@ -34,12 +37,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class fragment_friendlist extends Fragment {
+public class fragment_friendlist extends Fragment implements FriendListAdapter.OnFriendListener {
 
-    private Friendlist_adapter list;
-    private List<String> friend_list;
+    private FriendListAdapter list;
+    private ArrayList<String> friend_list;
 
     public SQliteManager helper;
 
@@ -62,6 +64,7 @@ public class fragment_friendlist extends Fragment {
         friendlist_RecyclerView = view.findViewById(R.id.collect_recyclerView);
         friendlist_RecyclerView.setHasFixedSize(true);
         friendlist_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        friendlist_RecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         speicher_fragment = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
         speicher_editor = speicher_fragment.edit();
@@ -148,8 +151,7 @@ public class fragment_friendlist extends Fragment {
     }
 
     public void addUser(){
-
-        list= new Friendlist_adapter(getContext(),friend_list);
+        list= new FriendListAdapter(getContext(),friend_list, this);
         friendlist_RecyclerView.setAdapter(list);
     }
 
@@ -271,4 +273,10 @@ public class fragment_friendlist extends Fragment {
        }
     }
 
+    @Override
+    public void onFriendClick(int position) {
+        friend_list.get(position);
+        Intent chatIntent = new Intent(getContext(), Chat_Activity.class);
+        startActivity(chatIntent);
+    }
 }

@@ -1,7 +1,6 @@
 package de.uni_due.paluno.se.palaver;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -17,7 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import de.uni_due.paluno.se.palaver.fragment.fragment_friendlist;
 import de.uni_due.paluno.se.palaver.fragment.fragment_setting;
 
-public class User_Interface_Activity extends AppCompatActivity implements View.OnClickListener{
+public class User_Interface_Activity extends AppCompatActivity implements View.OnClickListener {
 
     TextView username;
 
@@ -40,8 +39,8 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
 
         username =findViewById(R.id.username_interface_activity);
 
-        SharedPreferences speicher = getSharedPreferences("loginUser", Context.MODE_PRIVATE);
-        String name = speicher.getString("username", "");
+        SharedPreferences loginUser_SP = getSharedPreferences("loginUser", Context.MODE_PRIVATE);
+        String name = loginUser_SP.getString("username", "");
         username.setText(name);
 
         //View Initialization

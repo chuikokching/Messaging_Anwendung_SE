@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".firstActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
@@ -36,6 +37,10 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <activity android:name=".MainActivity" />
+
+        <activity
+            android:name=".Chat_Activity"
+            android:parentActivityName=".User_Interface_Activity"/>
 
         <service
             android:name=".firebase.MyFirebaseMessagingService"

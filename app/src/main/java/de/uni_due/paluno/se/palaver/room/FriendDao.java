@@ -1,26 +1,23 @@
 package de.uni_due.paluno.se.palaver.room;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
 
 @Dao
 public interface FriendDao {
-    @Query("SELECT * FROM user_friendlist")
-    List<Friend> getAll();
+    @Query("SELECT * FROM friend_list")
+    List<Friend> getFriendList();
 
-    @Query("SELECT * FROM user_friendlist WHERE uid IN (:userIds)")
-    List<Friend> loadAllByIds(int[] userIds);
+    @Query("SELECT * FROM friend_list WHERE nickName LIKE :name")
+    Friend getFriend(String name);
 
-    @Query("SELECT * FROM user_friendlist WHERE nickName LIKE :first")
-    Friend findByName(String first);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void addFriends(Friend... friends);
 
-    @Insert
-    void insertAll(Friend... friends);
-
-    @Delete
-    void delete(Friend friend);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void addFriend(Friend friend);
 }
