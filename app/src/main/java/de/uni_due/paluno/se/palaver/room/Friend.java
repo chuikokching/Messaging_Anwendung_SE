@@ -12,6 +12,10 @@ public class Friend {
     @ColumnInfo(name = "nickName")
     private String nickName;
 
+    public Friend(String nickName) {
+        this.nickName = nickName;
+    }
+
     public String getNickName() {
         return nickName;
     }

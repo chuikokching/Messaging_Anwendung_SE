@@ -30,6 +30,8 @@ import de.uni_due.paluno.se.palaver.datenbank.SQlite_Operation_Manager;
 import de.uni_due.paluno.se.palaver.datenbank.SQlite_Version_Manager;
 import de.uni_due.paluno.se.palaver.Volley_Connect;
 import de.uni_due.paluno.se.palaver.R;
+import de.uni_due.paluno.se.palaver.room.Friend;
+import de.uni_due.paluno.se.palaver.room.PalaverDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +39,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class fragment_friendlist extends Fragment implements FriendListAdapter.OnFriendListener {
 
@@ -47,9 +50,9 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
 
     public RecyclerView friendlist_RecyclerView;
 
-    SharedPreferences speicher_fragment;
+    SharedPreferences loginUser_SP;
 
-    SharedPreferences.Editor speicher_editor;
+    SharedPreferences.Editor loginUser_SP_Editor;
 
     @Override
     public void onAttach(Context context) {
@@ -66,16 +69,16 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
         friendlist_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         friendlist_RecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-        speicher_fragment = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
-        speicher_editor = speicher_fragment.edit();
+        loginUser_SP = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
 
         friend_list = new ArrayList<>();
-        String user = speicher_fragment.getString("username", "");
+        String user = loginUser_SP.getString("username", "");
 
         SQlite_Version_Manager.setTable_name(user);
 
         helper= SQlite_Operation_Manager.newInstance(this.getContext());
 
+        /**
         if(exist_database())
         {
             if(exist_data())
@@ -91,18 +94,28 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
         {
             create_DataBase();
             get_Friendslist_from_volley();
+        }*/
+        if(exist_data())
+        {
+            get_Friendslist_from_DataBase();
+        }
+        else
+        {
+            get_Friendslist_from_volley();
         }
         return view;
     }
 
+    /**
     public void create_DataBase(){
         SQLiteDatabase db = helper.getWritableDatabase();
         String sql= "create table "+SQlite_Version_Manager.getTable_name()+"_friendlist(_id Integer primary key,name varchar(40))";
         db.execSQL(sql);
         System.out.println(" db has been created!!!! ");
-    }
+    }*/
 
     public boolean exist_data(){
+        /**
         Cursor cursor ;
         SQLiteDatabase db = helper.getWritableDatabase();
         cursor=db.query(SQlite_Version_Manager.getTable_name()+"_friendlist",null,null,null,null,null,null);
@@ -110,14 +123,21 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
         if(cursor.getCount()>0)
             return true;
         else
+            return false;*/
+        List<Friend> friendList = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
+        if(friendList.size() > 0) {
+            return true;
+        } else {
             return false;
+        }
     }
 
     /**
-     * check whether there is a new friend.
+     * check how many friends already in DB
      * @return number of friends that user have after addition.
      */
-    public int exist_new_friends(){
+    public int numberOfFriendsInDB(){
+        /**
         Cursor cursor ;
         SQLiteDatabase db = helper.getWritableDatabase();
         cursor=db.query(SQlite_Version_Manager.getTable_name()+"_friendlist",null,null,null,null,null,null);
@@ -125,7 +145,10 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
         if(cursor.getCount()>0)
             return cursor.getCount();
         else
-            return 0;
+            return 0;*/
+
+        List<Friend> friendList = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
+        return (friendList.size() > 0) ? friendList.size() : 0;
     }
 
     /**
@@ -157,9 +180,9 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
 
     public void get_Friendslist_from_volley()
     {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        String user = speicher_fragment.getString("username", "");
-        String pass = speicher_fragment.getString("password", "");
+        //final SQLiteDatabase db = helper.getWritableDatabase();
+        String user = loginUser_SP.getString("username", "");
+        String pass = loginUser_SP.getString("password", "");
 
         String url="http://palaver.se.paluno.uni-due.de/api/friends/get";
 
@@ -184,16 +207,18 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
                                 {
                                     ContentValues values = new ContentValues();
                                     for (int i=0; i<data.length(); i++){
-                                        values.put("_id",i);
-                                        values.put("name",data.getString(i));
-                                        long result = db.insert(SQlite_Version_Manager.getTable_name()+"_friendlist",null,values);
-                                        if(result>0)
-                                        {
+                                        //values.put("_id",i);
+                                        //values.put("name",data.getString(i));
+                                        Friend friend = new Friend(data.getString(i));
+                                        PalaverDatabase.getInstance(getContext()).getFriendDao().addFriend(friend);
+                                        //long result = db.insert(SQlite_Version_Manager.getTable_name()+"_friendlist",null,values);
+                                        //if(result>0)
+                                        //{
                                             Toast.makeText(getActivity(),"Update DB Successfully",Toast.LENGTH_SHORT).show();
-                                        }
-                                        else {
-                                            Toast.makeText(getActivity(),"failed: "+info,Toast.LENGTH_SHORT).show();
-                                        }
+                                        //}
+                                        //else {
+                                          //  Toast.makeText(getActivity(),"failed: "+info,Toast.LENGTH_SHORT).show();
+                                        //}
                                     }
                                     get_Friendslist_from_DataBase();
                                 }
@@ -224,6 +249,7 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
 
     public void get_Friendslist_from_DataBase()
     {
+        /**
         SQLiteDatabase db = helper.getWritableDatabase();
         //query all the data of the entire table to cursor
         Cursor cursor = db.query(SQlite_Version_Manager.getTable_name()+"_friendlist",null,null,null,null,null,null);
@@ -231,6 +257,11 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
         {
             String name = cursor.getString(cursor.getColumnIndex("name"));
             friend_list.add(name);
+        }
+         */
+        List<Friend> friendList = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
+        for (Friend friend: friendList) {
+            friend_list.add(friend.getNickName());
         }
         addUser();
     }
@@ -254,7 +285,7 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
         if (hidden) {
             Log.i("tag","-----OnHidden-------");
 
-            if(!(friend_list.size()==exist_new_friends()))
+            if(!(friend_list.size()==numberOfFriendsInDB()))
             {
                 SQLiteDatabase db = helper.getWritableDatabase();
                 String sql = "select * from "+SQlite_Version_Manager.getTable_name()+"_friendlist";
@@ -262,7 +293,7 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
 
                 while(cursor.moveToNext())
                 {
-                    if(cursor.getInt(cursor.getColumnIndex("_id"))==(exist_new_friends()-1))
+                    if(cursor.getInt(cursor.getColumnIndex("_id"))==(numberOfFriendsInDB()-1))
                     {
                         String name = cursor.getString(cursor.getColumnIndex("name"));
                         friend_list.add(name);

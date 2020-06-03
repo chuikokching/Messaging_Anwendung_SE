@@ -24,6 +24,14 @@ public class Chat {
     @ColumnInfo(name = "sendtype")
     private String sendType;
 
+    public Chat(String friend, String mimeType, String data, String dateTime, String sendType) {
+        this.friend = friend;
+        this.mimeType = mimeType;
+        this.data = data;
+        this.dateTime = dateTime;
+        this.sendType = sendType;
+    }
+
     public int getCid() {
         return cid;
     }

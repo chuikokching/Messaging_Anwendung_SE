@@ -37,8 +37,8 @@ import java.util.HashMap;
 
 
 public class fragment_setting extends Fragment {
-    SharedPreferences speicher_fragment;
-    SharedPreferences.Editor speicher_editor;
+    SharedPreferences loginUser_SP;
+    SharedPreferences.Editor loginUser_SP_Editor;
     public SQliteManager helper;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,10 +54,10 @@ public class fragment_setting extends Fragment {
         Button button_signout= getActivity().findViewById(R.id.button_sign_out);
         Button button_addfriends= getActivity().findViewById(R.id.button_friend_add);
 
-        speicher_fragment = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
-        speicher_editor = speicher_fragment.edit();
+        loginUser_SP = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
+        loginUser_SP_Editor = loginUser_SP.edit();
 
-        String user = speicher_fragment.getString("username", "");
+        String user = loginUser_SP.getString("username", "");
 
         SQlite_Version_Manager.setTable_name(user);
 
@@ -66,7 +66,7 @@ public class fragment_setting extends Fragment {
         button_signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                speicher_editor.clear().commit();
+                loginUser_SP_Editor.clear().commit();
                 Intent test2 = new Intent(fragment_setting.this.getActivity(), MainActivity.class);
                 fragment_setting.this.startActivity(test2);
                 fragment_setting.this.getActivity().finish();
@@ -90,11 +90,10 @@ public class fragment_setting extends Fragment {
     public void volley_add_friend(View v,EditText nickname)
     {
         final SQLiteDatabase db = helper.getWritableDatabase();
-        speicher_fragment= getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
-        speicher_editor=speicher_fragment.edit();
+        loginUser_SP= getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
 
-        String user = speicher_fragment.getString("username", "");
-        String pass = speicher_fragment.getString("password", "");
+        String user = loginUser_SP.getString("username", "");
+        String pass = loginUser_SP.getString("password", "");
 
         final String friend=nickname.getText().toString();
         String url="http://palaver.se.paluno.uni-due.de/api/friends/add";
@@ -144,7 +143,6 @@ public class fragment_setting extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //VolleyLog.d(TAG, "Error: " + error.getMessage());
-                        System.out.println("Output from Error: "+ error.toString());
                         Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
 
                     }
