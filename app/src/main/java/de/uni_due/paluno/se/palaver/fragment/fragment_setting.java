@@ -1,12 +1,8 @@
 package de.uni_due.paluno.se.palaver.fragment;
 
-
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,13 +18,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import de.uni_due.paluno.se.palaver.datenbank.SQliteManager;
-import de.uni_due.paluno.se.palaver.datenbank.SQlite_Operation_Manager;
-import de.uni_due.paluno.se.palaver.datenbank.SQlite_Version_Manager;
+
 import de.uni_due.paluno.se.palaver.MainActivity;
 
 import de.uni_due.paluno.se.palaver.Volley_Connect;
 import de.uni_due.paluno.se.palaver.R;
+import de.uni_due.paluno.se.palaver.room.Friend;
+import de.uni_due.paluno.se.palaver.room.PalaverDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +35,8 @@ import java.util.HashMap;
 public class fragment_setting extends Fragment {
     SharedPreferences loginUser_SP;
     SharedPreferences.Editor loginUser_SP_Editor;
-    public SQliteManager helper;
+
+    final String ADD_FRIEND_REQUEST_TAG = "add_friend_Request";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -56,12 +53,6 @@ public class fragment_setting extends Fragment {
 
         loginUser_SP = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
         loginUser_SP_Editor = loginUser_SP.edit();
-
-        String user = loginUser_SP.getString("username", "");
-
-        SQlite_Version_Manager.setTable_name(user);
-
-        helper = SQlite_Operation_Manager.newInstance(this.getContext());
 
         button_signout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +80,6 @@ public class fragment_setting extends Fragment {
      */
     public void volley_add_friend(View v,EditText nickname)
     {
-        final SQLiteDatabase db = helper.getWritableDatabase();
         loginUser_SP= getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
 
         String user = loginUser_SP.getString("username", "");
@@ -117,17 +107,9 @@ public class fragment_setting extends Fragment {
                             String message= response.getString("Info");
 
                             if(number.equals("1")) {
-                               ContentValues values = new ContentValues();
-                               values.put("_id",number_of_rows());
-                               values.put("name",friend);
-                               long result = db.insert(SQlite_Version_Manager.getTable_name()+"_friendlist",null,values);
-                               if(result>0)
-                               {
-                                   Toast.makeText(getActivity(),"Update DB Successfully and "+message ,Toast.LENGTH_SHORT).show();
-                               }
-                                else {
-                                        Toast.makeText(getActivity(),"failed: "+message,Toast.LENGTH_SHORT).show();
-                               }
+                                Friend newFriend = new Friend(friend);
+                                PalaverDatabase.getInstance(getContext()).getFriendDao().addFriend(newFriend);
+                                Toast.makeText(getActivity(),"Update DB Successfully and "+message ,Toast.LENGTH_SHORT).show();
                             }
                             else
                             {
@@ -142,34 +124,17 @@ public class fragment_setting extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //VolleyLog.d(TAG, "Error: " + error.getMessage());
                         Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
-
                     }
                 });
-        jsonArrayReq.setTag("Add_Request");
+        jsonArrayReq.setTag(ADD_FRIEND_REQUEST_TAG);
         Volley_Connect.getVolleyQueues().add(jsonArrayReq);
 
-    }
-
-    /**
-     * calculate rows in a table
-     * @return number of rows
-     */
-    public int number_of_rows(){
-        Cursor cursor ;
-        SQLiteDatabase db = helper.getWritableDatabase();
-        cursor=db.query(SQlite_Version_Manager.getTable_name()+"_friendlist",null,null,null,null,null,null);
-
-        if(cursor.getCount()>0)
-            return cursor.getCount();
-        else
-            return 0;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Volley_Connect.getVolleyQueues().cancelAll("Add_Request");
+        Volley_Connect.getVolleyQueues().cancelAll(ADD_FRIEND_REQUEST_TAG);
     }
 }

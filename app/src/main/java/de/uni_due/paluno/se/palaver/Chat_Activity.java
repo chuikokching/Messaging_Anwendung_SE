@@ -1,18 +1,20 @@
 package de.uni_due.paluno.se.palaver;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Chat_Activity extends AppCompatActivity {
+    TextView friendNameTextView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        //getSupportActionBar().setTitle("123");
-        //getSupportActionBar().setHomeButtonEnabled(true);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        String friendName = getIntent().getStringExtra("friendName");
+        friendNameTextView = findViewById(R.id.friendName);
+        friendNameTextView.setText(friendName);
     }
 }

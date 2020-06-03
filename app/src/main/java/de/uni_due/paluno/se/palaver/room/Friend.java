@@ -9,7 +9,7 @@ public class Friend {
     @PrimaryKey(autoGenerate=true)
     private int uid;
 
-    @ColumnInfo(name = "nickName")
+    @ColumnInfo(name = "nickname")
     private String nickName;
 
     public Friend(String nickName) {
