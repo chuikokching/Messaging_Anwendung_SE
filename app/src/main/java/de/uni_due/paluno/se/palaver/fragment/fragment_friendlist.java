@@ -36,8 +36,8 @@ import java.util.List;
 
 public class fragment_friendlist extends Fragment implements FriendListAdapter.OnFriendListener {
 
-    private FriendListAdapter list;
-    private List<String> friend_list_adapter;
+    private FriendListAdapter friendListAdapter;
+    private List<String> friendLists;
 
     public RecyclerView friendlist_RecyclerView;
 
@@ -62,7 +62,7 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
 
         loginUser_SP = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
 
-        friend_list_adapter = new ArrayList<>();
+        friendLists = new ArrayList<>();
 
         if(exist_data())
         {
@@ -94,8 +94,8 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
      * Add the list of friends to adapter
      */
     public void addUser(){
-        list= new FriendListAdapter(getContext(),friend_list_adapter, this);
-        friendlist_RecyclerView.setAdapter(list);
+        friendListAdapter= new FriendListAdapter(getContext(),friendLists, this);
+        friendlist_RecyclerView.setAdapter(friendListAdapter);
     }
 
     /**
@@ -162,7 +162,7 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
     {
         List<Friend> friendList = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
         for (Friend friend : friendList) {
-            friend_list_adapter.add(friend.getNickName());
+            friendLists.add(friend.getNickName());
         }
         addUser();
     }
@@ -180,25 +180,24 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (hidden) {
-            List<Friend> friendList = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
 
-            if(!(friend_list_adapter.size()==friendList.size()))
-            {
-                for (Friend friend : friendList) {
-                    if(friend_list_adapter.contains(friend.getNickName()) == false) {
-                        friend_list_adapter.add(friend.getNickName());
-                    }
+        List<Friend> friendList = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
+
+        if(!(friendLists.size()==friendList.size()))
+        {
+            for (Friend friend : friendList) {
+                if(friendLists.contains(friend.getNickName()) == false) {
+                    friendLists.add(friend.getNickName());
                 }
-                addUser();
             }
-       }
+            addUser();
+        }
     }
 
     @Override
     public void onFriendClick(int position) {
-        friend_list_adapter.get(position);
-        String friendName = friend_list_adapter.get(position);
+        friendLists.get(position);
+        String friendName = friendLists.get(position);
         Intent chatIntent = new Intent(getContext(), Chat_Activity.class);
         chatIntent.putExtra("friendName", friendName);
         startActivity(chatIntent);
