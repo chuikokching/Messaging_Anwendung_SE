@@ -29,14 +29,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import de.uni_due.paluno.se.palaver.R;
 import de.uni_due.paluno.se.palaver.Volley_Connect;
 import de.uni_due.paluno.se.palaver.adapter.ChatAdapter;
-import de.uni_due.paluno.se.palaver.firebase.MyFirebaseMessagingService;
 import de.uni_due.paluno.se.palaver.room.Chat;
 import de.uni_due.paluno.se.palaver.room.MimeTypeEnum;
 import de.uni_due.paluno.se.palaver.room.PalaverDatabase;
@@ -66,6 +64,8 @@ public class Fragment_chat extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        getChatListFromServer();
+        addChat();
     }
 
     @Nullable
@@ -109,7 +109,7 @@ public class Fragment_chat extends Fragment {
                                 if(response.getInt("MsgType") == 1) {
                                     String chatType = SendTypeEnum.TYPE_SEND.getSendType();
                                     String dateTime = response.getJSONObject("Data").getString("DateTime");
-                                    Chat newChat = new Chat(friendName, MimeTypeEnum.TEXT_PLAIN.getMimeType(), data, dateTime.substring(0, dateTime.indexOf(".")), chatType);
+                                    Chat newChat = new Chat(friendName, MimeTypeEnum.TEXT_PLAIN.getMimeType(), data, dateTime, chatType);
                                     PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
                                     chatInputText.setText("");
                                     addChat();
@@ -178,8 +178,9 @@ public class Fragment_chat extends Fragment {
                 try {
                     if (response.getInt("MsgType") == 1) {
                         JSONArray messages = response.getJSONArray("Data");
-                        if(PalaverDatabase.getInstance(getContext()).getChatDao().getChatListByName(friendName).size() < messages.length()) {
+                        if(PalaverDatabase.getInstance(getContext()).getChatDao().getChatListByName(friendName).size() != 0) {
                             PalaverDatabase.getInstance(getContext()).getChatDao().deleteChatsAboutOneFriend(friendName);
+                        } else {
                             for (int i = 0 ; i < messages.length() ; i++) {
                                 JSONObject message = (JSONObject) messages.get(i);
                                 String sender = message.getString("Sender");
@@ -194,7 +195,7 @@ public class Fragment_chat extends Fragment {
                                     Chat newChat = new Chat(sender, mimeType, data, dateTime, SendTypeEnum.TYPE_RECEIVE.getSendType());
                                     PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
                                 }
-                                Toast.makeText(getActivity(),"Update Chat Successfully",Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getActivity(),"Update Chat Successfully",Toast.LENGTH_SHORT).show();
                                 addChat();
                             }
                         }
@@ -235,7 +236,20 @@ public class Fragment_chat extends Fragment {
                 try {
                     if(response.getInt("MsgType") == 1) {
                         JSONArray messages = response.getJSONArray("Data");
-                        for (int i = 0 ; i < messages.length() ; i++) {
+
+                        List<Chat> chatLists = PalaverDatabase.getInstance(getContext()).getChatDao().getChatListByName(friendName);
+                        Chat lastChat = chatLists.get(chatLists.size() - 1);
+                        JSONObject firstMessageFromServer = (JSONObject)messages.get(0);
+                        int i = 0;
+                        String dateTimeOfLastChat = lastChat.getDateTime().substring(0, lastChat.getDateTime().indexOf("."));
+                        String dateTimeOfMessage = firstMessageFromServer.getString("DateTime")
+                                .substring(0, firstMessageFromServer.getString("DateTime").indexOf("."));
+                        if(lastChat.getData().equals(firstMessageFromServer.getString("Data")) &&
+                                dateTimeOfLastChat.equals(dateTimeOfMessage)) {
+                            i = 1;
+                        }
+
+                        for ( ; i < messages.length() ; i++) {
                             JSONObject message = (JSONObject) messages.get(i);
                             String sender = message.getString("Sender");
                             String recipient = message.getString("Recipient");
