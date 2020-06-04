@@ -53,6 +53,11 @@ public class Fragment_chat extends Fragment {
     private SharedPreferences loginUser_SP;
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         friendName = getArguments().getString("name_of_friend");
@@ -61,8 +66,6 @@ public class Fragment_chat extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getChatListFromServer();
-        addChat();
     }
 
     @Nullable
@@ -132,14 +135,11 @@ public class Fragment_chat extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(intent.getAction().equals("de.uni_due.paluno.se.palaver.broadcast_NEW_MESSAGE")) {
-                    getChatListFromServer();
-                    addChat();
+                    updateChatDB();
                 }
             }
         };
         getActivity().registerReceiver(chatBroadcastReceiver,filter);
-
-        addChat();
 
         return chatView;
     }
@@ -149,9 +149,14 @@ public class Fragment_chat extends Fragment {
      */
     public void addChat(){
         chatListsInDB = PalaverDatabase.getInstance(getContext()).getChatDao().getChatListByName(friendName);
-        chatAdapter = new ChatAdapter(getContext(), chatListsInDB);
-        chatRecyclerView.setAdapter(chatAdapter);
-        chatAdapter.notifyDataSetChanged();
+        if(chatAdapter == null) {
+            chatAdapter = new ChatAdapter(getContext(), chatListsInDB);
+            chatRecyclerView.setAdapter(chatAdapter);
+        } else {
+            chatAdapter.setAdapter_chat_list(chatListsInDB);
+            chatAdapter.notifyDataSetChanged();
+        }
+
         chatRecyclerView.scrollToPosition(chatListsInDB.size() - 1);
     }
 
@@ -189,6 +194,8 @@ public class Fragment_chat extends Fragment {
                                     Chat newChat = new Chat(sender, mimeType, data, dateTime, SendTypeEnum.TYPE_RECEIVE.getSendType());
                                     PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
                                 }
+                                Toast.makeText(getActivity(),"Update Chat Successfully",Toast.LENGTH_SHORT).show();
+                                addChat();
                             }
                         }
                     }
@@ -205,7 +212,6 @@ public class Fragment_chat extends Fragment {
         Volley_Connect.getVolleyQueues().add(getJSONArrayRequest);
     }
 
-    /**
     public void updateChatDB() {
         final String username = loginUser_SP.getString("username", "");
         final String password = loginUser_SP.getString("password", "");
@@ -245,6 +251,7 @@ public class Fragment_chat extends Fragment {
                                 Chat newChat = new Chat(sender, mimeType, data, dateTime, SendTypeEnum.TYPE_RECEIVE.getSendType());
                                 PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
                             }
+                            addChat();
                         }
                     }
                 } catch (JSONException e) {
@@ -258,5 +265,5 @@ public class Fragment_chat extends Fragment {
             }
         });
         Volley_Connect.getVolleyQueues().add(getMessageJSONRequest);
-    }*/
+    }
 }

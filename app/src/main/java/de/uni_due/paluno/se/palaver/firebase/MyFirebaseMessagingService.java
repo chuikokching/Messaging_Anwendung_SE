@@ -6,18 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,11 +35,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String senderName = remoteMessage.getData().get("sender");
             String preview = remoteMessage.getData().get("preview");
 
-            Friend sender = new Friend(senderName);
-
             // add the new sender to DB
             List<Friend> friendList = PalaverDatabase.getInstance(this).getFriendDao().getFriendList();
-            if(!friendList.contains(sender)) {
+
+            List<String> friendNameList = new ArrayList<>();
+            for (Friend friend : friendList) {
+                friendNameList.add(friend.getNickname());
+            }
+
+            if(!friendNameList.contains(senderName)) {
+                Friend sender = new Friend(senderName);
                 PalaverDatabase.getInstance(this).getFriendDao().addFriend(sender);
 
                 // send broadcast to update friend list fragment
@@ -59,7 +60,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     new NotificationCompat.Builder(this, "id")
                             .setContentTitle(senderName)
                             .setContentText(preview)
-                            .setSmallIcon(R.drawable.logo)
+                            .setSmallIcon(R.drawable.palaver_pic)
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT);
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(0, mBuilder.build());

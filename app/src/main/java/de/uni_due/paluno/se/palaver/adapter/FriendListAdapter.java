@@ -13,20 +13,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import de.uni_due.paluno.se.palaver.R;
+import de.uni_due.paluno.se.palaver.room.Friend;
 
 public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.ViewHolder>{
     @NonNull
 
     private Context context;
-    private List<String> adapter_friend_list;
+    private List<Friend> adapter_friend_list;
     private OnFriendListener mOnFriendListener;
 
-    public FriendListAdapter(Context context, List<String> friendList, OnFriendListener onFriendListener)
+    public FriendListAdapter(Context context, List<Friend> friendList, OnFriendListener onFriendListener)
     {
         this.context=context;
         this.adapter_friend_list=friendList;
         this.mOnFriendListener = onFriendListener;
     }
+
+    public void setAdapter_friend_list(List<Friend> adapter_friend_list) {
+        this.adapter_friend_list = adapter_friend_list;
+    }
+
     @Override
     public FriendListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(context).inflate(R.layout.user_interface_item,viewGroup,false);
@@ -35,7 +41,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull FriendListAdapter.ViewHolder viewHolder, int i) {
-        viewHolder.username.setText(adapter_friend_list.get(i));
+        viewHolder.username.setText(adapter_friend_list.get(i).getNickname());
         viewHolder.profile_image.setImageResource(R.drawable.ic_face_black_24dp);
     }
 

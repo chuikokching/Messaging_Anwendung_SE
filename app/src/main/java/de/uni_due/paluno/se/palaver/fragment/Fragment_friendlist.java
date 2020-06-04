@@ -39,7 +39,7 @@ import java.util.List;
 public class Fragment_friendlist extends Fragment implements FriendListAdapter.OnFriendListener {
 
     private FriendListAdapter friendListAdapter;
-    private List<String> friendListsInAdapter;
+    private List<Friend> friendListsInAdapter;
 
     public RecyclerView friendlist_RecyclerView;
 
@@ -108,8 +108,14 @@ public class Fragment_friendlist extends Fragment implements FriendListAdapter.O
      * Add the list of friends to adapter
      */
     public void addUser(){
-        friendListAdapter= new FriendListAdapter(getContext(),friendListsInAdapter, this);
-        friendlist_RecyclerView.setAdapter(friendListAdapter);
+        friendListsInAdapter = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
+        if(friendListAdapter == null) {
+            friendListAdapter= new FriendListAdapter(getContext(),friendListsInAdapter, this);
+            friendlist_RecyclerView.setAdapter(friendListAdapter);
+        } else {
+            friendListAdapter.setAdapter_friend_list(friendListsInAdapter);
+            friendListAdapter.notifyDataSetChanged();
+        }
     }
 
     /**
@@ -176,7 +182,7 @@ public class Fragment_friendlist extends Fragment implements FriendListAdapter.O
     {
         List<Friend> friendList = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
         for (Friend friend : friendList) {
-            friendListsInAdapter.add(friend.getNickname());
+            friendListsInAdapter.add(friend);
         }
         addUser();
     }
@@ -201,7 +207,7 @@ public class Fragment_friendlist extends Fragment implements FriendListAdapter.O
         {
             for (Friend friend : friendListInDB) {
                 if(friendListsInAdapter.contains(friend.getNickname()) == false) {
-                    friendListsInAdapter.add(friend.getNickname());
+                    friendListsInAdapter.add(friend);
                 }
             }
             addUser();
@@ -211,7 +217,7 @@ public class Fragment_friendlist extends Fragment implements FriendListAdapter.O
     @Override
     public void onFriendClick(int position) {
         friendListsInAdapter.get(position);
-        String friendName = friendListsInAdapter.get(position);
+        String friendName = friendListsInAdapter.get(position).getNickname();
         Intent chatIntent = new Intent(getContext(), Chat_Activity.class);
         chatIntent.putExtra("friendName", friendName);
         startActivity(chatIntent);

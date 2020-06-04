@@ -27,6 +27,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         this.adapter_chat_list = chatList;
     }
 
+    public void setAdapter_chat_list(List<Chat> adapter_chat_list) {
+        this.adapter_chat_list = adapter_chat_list;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
