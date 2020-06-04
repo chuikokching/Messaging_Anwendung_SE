@@ -10,18 +10,18 @@ public class Friend {
     private int uid;
 
     @ColumnInfo(name = "nickname")
-    private String nickName;
+    private String nickname;
 
-    public Friend(String nickName) {
-        this.nickName = nickName;
+    public Friend(String nickname) {
+        this.nickname = nickname;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public int getUid() {

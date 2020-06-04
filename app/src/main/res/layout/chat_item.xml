@@ -7,6 +7,7 @@
     android:padding="8dp">
 
     <LinearLayout
+        android:id="@+id/text_layout_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -18,13 +19,14 @@
             android:layout_width="wrap_content"
             android:maxWidth="250dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="left|center"
             android:layout_margin="8dp"
             android:textColor="#ffffff"
             />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/text_layout_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -36,13 +38,14 @@
             android:layout_width="wrap_content"
             android:maxWidth="250dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="left|center"
             android:layout_margin="8dp"
             android:textColor="#000000"
             />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/location_layout_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -60,6 +63,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/location_layout_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -77,6 +81,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/pic_layout_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -92,6 +97,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/pic_layout_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

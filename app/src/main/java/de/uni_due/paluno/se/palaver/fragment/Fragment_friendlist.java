@@ -1,7 +1,9 @@
 package de.uni_due.paluno.se.palaver.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,10 +36,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class fragment_friendlist extends Fragment implements FriendListAdapter.OnFriendListener {
+public class Fragment_friendlist extends Fragment implements FriendListAdapter.OnFriendListener {
 
     private FriendListAdapter friendListAdapter;
-    private List<String> friendLists;
+    private List<String> friendListsInAdapter;
 
     public RecyclerView friendlist_RecyclerView;
 
@@ -62,7 +64,7 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
 
         loginUser_SP = getActivity().getSharedPreferences("loginUser", Context.MODE_PRIVATE);
 
-        friendLists = new ArrayList<>();
+        friendListsInAdapter = new ArrayList<>();
 
         if(exist_data())
         {
@@ -72,9 +74,21 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
         {
             get_Friendslist_from_volley();
         }
+
+        // set broadcast to update the list of friend
+        IntentFilter filter = new IntentFilter("de.uni_due.paluno.se.palaver.broadcast_NEW_FRIEND");
+        BroadcastReceiver newFriendBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent.getAction().equals("de.uni_due.paluno.se.palaver.broadcast_NEW_FRIEND")) {
+                    addUser();
+                }
+            }
+        };
+        getActivity().registerReceiver(newFriendBroadcastReceiver,filter);
+
         return view;
     }
-
 
     /**
      * Check if the list of friends already exists
@@ -94,7 +108,7 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
      * Add the list of friends to adapter
      */
     public void addUser(){
-        friendListAdapter= new FriendListAdapter(getContext(),friendLists, this);
+        friendListAdapter= new FriendListAdapter(getContext(),friendListsInAdapter, this);
         friendlist_RecyclerView.setAdapter(friendListAdapter);
     }
 
@@ -162,7 +176,7 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
     {
         List<Friend> friendList = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
         for (Friend friend : friendList) {
-            friendLists.add(friend.getNickName());
+            friendListsInAdapter.add(friend.getNickname());
         }
         addUser();
     }
@@ -181,13 +195,13 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 
-        List<Friend> friendList = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
+        List<Friend> friendListInDB = PalaverDatabase.getInstance(getContext()).getFriendDao().getFriendList();
 
-        if(!(friendLists.size()==friendList.size()))
+        if(!(friendListsInAdapter.size()==friendListInDB.size()))
         {
-            for (Friend friend : friendList) {
-                if(friendLists.contains(friend.getNickName()) == false) {
-                    friendLists.add(friend.getNickName());
+            for (Friend friend : friendListInDB) {
+                if(friendListsInAdapter.contains(friend.getNickname()) == false) {
+                    friendListsInAdapter.add(friend.getNickname());
                 }
             }
             addUser();
@@ -196,8 +210,8 @@ public class fragment_friendlist extends Fragment implements FriendListAdapter.O
 
     @Override
     public void onFriendClick(int position) {
-        friendLists.get(position);
-        String friendName = friendLists.get(position);
+        friendListsInAdapter.get(position);
+        String friendName = friendListsInAdapter.get(position);
         Intent chatIntent = new Intent(getContext(), Chat_Activity.class);
         chatIntent.putExtra("friendName", friendName);
         startActivity(chatIntent);

@@ -11,6 +11,12 @@ public interface ChatDao {
     @Query("SELECT * FROM chat_info WHERE friend LIKE :friend")
     List<Chat> getChatListByName(String friend);
 
+    @Query("DELETE FROM chat_info WHERE friend LIKE :friend")
+    void deleteChatsAboutOneFriend(String friend);
+
+    @Query("DELETE FROM chat_info")
+    void deleteChatTable();
+
     @Insert
     void addChat(Chat chat);
 }

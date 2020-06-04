@@ -32,7 +32,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 
-public class fragment_setting extends Fragment {
+public class Fragment_setting extends Fragment {
     SharedPreferences loginUser_SP;
     SharedPreferences.Editor loginUser_SP_Editor;
 
@@ -58,16 +58,18 @@ public class fragment_setting extends Fragment {
             @Override
             public void onClick(View v) {
                 loginUser_SP_Editor.clear().commit();
-                Intent test2 = new Intent(fragment_setting.this.getActivity(), MainActivity.class);
-                fragment_setting.this.startActivity(test2);
-                fragment_setting.this.getActivity().finish();
+                PalaverDatabase.getInstance(getContext()).getFriendDao().deleteFriendTable();
+                PalaverDatabase.getInstance(getContext()).getChatDao().deleteChatTable();
+                Intent test2 = new Intent(Fragment_setting.this.getActivity(), MainActivity.class);
+                Fragment_setting.this.startActivity(test2);
+                Fragment_setting.this.getActivity().finish();
             }
         });
 
         button_addfriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragment_setting.this.volley_add_friend(v, nickname);
+                Fragment_setting.this.volley_add_friend(v, nickname);
                 nickname.setText("");
             }
         });

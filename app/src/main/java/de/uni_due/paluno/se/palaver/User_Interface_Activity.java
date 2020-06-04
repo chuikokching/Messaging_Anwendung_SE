@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import de.uni_due.paluno.se.palaver.fragment.fragment_friendlist;
-import de.uni_due.paluno.se.palaver.fragment.fragment_setting;
+import de.uni_due.paluno.se.palaver.fragment.Fragment_friendlist;
+import de.uni_due.paluno.se.palaver.fragment.Fragment_setting;
 
 public class User_Interface_Activity extends AppCompatActivity implements View.OnClickListener {
 
@@ -82,7 +82,7 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
 
             case 2:
                 if (frag_list == null){
-                    frag_list = new fragment_friendlist();
+                    frag_list = new Fragment_friendlist();
                     transaction.add(R.id.frame_content,frag_list);
                 }
                 else{
@@ -92,7 +92,7 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
 
             case 3:
                 if (frag_setting == null){
-                    frag_setting = new fragment_setting();
+                    frag_setting = new Fragment_setting();
                     transaction.add(R.id.frame_content,frag_setting);
                 }
                 else{

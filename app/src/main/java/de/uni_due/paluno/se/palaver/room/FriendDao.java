@@ -9,14 +9,14 @@ import java.util.List;
 
 @Dao
 public interface FriendDao {
-    @Query("SELECT * FROM friend_list")
+    @Query("SELECT * FROM friend_list ORDER BY nickname ASC")
     List<Friend> getFriendList();
 
-    @Query("SELECT * FROM friend_list WHERE nickName LIKE :name")
+    @Query("SELECT * FROM friend_list WHERE nickname LIKE :name")
     Friend getFriend(String name);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void addFriends(Friend... friends);
+    @Query("DELETE FROM friend_list")
+    void deleteFriendTable();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addFriend(Friend friend);

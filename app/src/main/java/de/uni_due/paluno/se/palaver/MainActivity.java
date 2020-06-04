@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                                     String msgType = response.getString("MsgType");
                                     String info = response.getString("Info");
                                     if (Integer.parseInt(msgType) == 1) {
-                                        Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), info, Toast.LENGTH_LONG).show();
                                         Intent userInterfaceActivityIntent = new Intent(getApplicationContext(), User_Interface_Activity.class);
                                         startActivity(userInterfaceActivityIntent);
                                         finish();
