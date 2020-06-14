@@ -57,7 +57,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 holder.locationLayoutRight.setVisibility(View.GONE);
                 holder.picLayoutLeft.setVisibility(View.GONE);
                 holder.picLayoutRight.setVisibility(View.GONE);
-                holder.locationTextViewLeft.setText(chat.getData());
+                //holder.locationImageViewLeft.setText(chat.getData());
             } else if(chat.getMimeType().equals(MimeTypeEnum.IMAGE_PIC.getMimeType())) {
                 holder.textLayoutLeft.setVisibility(View.GONE);
                 holder.textLayoutRight.setVisibility(View.GONE);
@@ -83,7 +83,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 holder.locationLayoutRight.setVisibility(View.VISIBLE);
                 holder.picLayoutLeft.setVisibility(View.GONE);
                 holder.picLayoutRight.setVisibility(View.GONE);
-                holder.locationTextViewRight.setText(chat.getData());
+                //holder.locationImageViewRight.setText(chat.getData());
             } else if(chat.getMimeType().equals(MimeTypeEnum.IMAGE_PIC.getMimeType()) == true) {
                 holder.textLayoutLeft.setVisibility(View.GONE);
                 holder.textLayoutRight.setVisibility(View.GONE);
@@ -114,8 +114,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         private TextView textTextViewLeft;
         private TextView textTextViewRight;
 
-        private TextView locationTextViewLeft;
-        private TextView locationTextViewRight;
+        private ImageView locationImageViewLeft;
+        private ImageView locationImageViewRight;
 
         private ImageView picImageViewLeft;
         private ImageView picImageViewRight;
@@ -134,8 +134,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             textTextViewLeft = itemView.findViewById(R.id.chat_plainText_left);
             textTextViewRight = itemView.findViewById(R.id.chat_plainText_right);
 
-            locationTextViewLeft = itemView.findViewById(R.id.chat_location_left);
-            locationTextViewRight = itemView.findViewById(R.id.chat_location_right);
+            locationImageViewLeft = itemView.findViewById(R.id.chat_location_left);
+            locationImageViewRight = itemView.findViewById(R.id.chat_location_right);
 
             picImageViewLeft = itemView.findViewById(R.id.chat_pic_left);
             picImageViewRight = itemView.findViewById(R.id.chat_pic_right);

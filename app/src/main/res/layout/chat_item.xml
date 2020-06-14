@@ -48,18 +48,16 @@
         android:id="@+id/location_layout_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="left"
-        android:background="#51C7FD">
+        android:orientation="horizontal">
 
-        <TextView
+        <ImageView
             android:id="@+id/chat_location_left"
             android:layout_width="wrap_content"
-            android:maxWidth="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_margin="8dp"
-            android:textColor="#ffffff"/>
+            android:background="@drawable/mapbox" />
     </LinearLayout>
 
     <LinearLayout
@@ -67,17 +65,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="right"
-        android:background="#B3CCD5">
+        android:layout_gravity="right">
 
-        <TextView
+        <ImageView
             android:id="@+id/chat_location_right"
             android:layout_width="wrap_content"
-            android:maxWidth="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_margin="8dp"
-            android:textColor="#000000"/>
+            android:background="@drawable/mapbox"/>
     </LinearLayout>
 
     <LinearLayout
