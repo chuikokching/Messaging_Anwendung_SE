@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
+
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
@@ -54,7 +54,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.uni_due.paluno.se.palaver.MainActivity;
 import de.uni_due.paluno.se.palaver.Map_Activity;
 import de.uni_due.paluno.se.palaver.R;
 import de.uni_due.paluno.se.palaver.Volley_Connect;
@@ -111,7 +110,7 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
                 //base64 encode
                 byte[] encode = Base64.encode(bytes,Base64.DEFAULT);
                 String encodeString = new String(encode);
-                System.out.println("test "+encodeString);
+                //System.out.println("test "+encodeString);
                 send_ImageMessage(encodeString);
 
             } catch (IOException e) {
@@ -198,6 +197,7 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
                             error.printStackTrace();
                         }
                     });
+                    sendJSONArrayRequest.setTag("Send_message");
                     Volley_Connect.getVolleyQueues().add(sendJSONArrayRequest);
                 }
             }
@@ -205,18 +205,20 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
 
         // set broadcast to update the list of chat
         IntentFilter filter = new IntentFilter("de.uni_due.paluno.se.palaver.broadcast_NEW_MESSAGE");
-        BroadcastReceiver chatBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if(intent.getAction().equals("de.uni_due.paluno.se.palaver.broadcast_NEW_MESSAGE")) {
-                    updateChatDB();
-                }
-            }
-        };
         getActivity().registerReceiver(chatBroadcastReceiver,filter);
+
 
         return chatView;
     }
+
+    BroadcastReceiver chatBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals("de.uni_due.paluno.se.palaver.broadcast_NEW_MESSAGE")) {
+                updateChatDB();
+            }
+        }
+    };
 
     LocationCallback mLocationCallback = new LocationCallback(){
         @Override
@@ -264,6 +266,7 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
                 error.printStackTrace();
             }
         });
+        sendJSONArrayRequest.setTag("Send_imagerequest");
         Volley_Connect.getVolleyQueues().add(sendJSONArrayRequest);
     }
 
@@ -302,6 +305,7 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
                 error.printStackTrace();
             }
         });
+        sendJSONArrayRequest.setTag("Send_locationrequest");
         Volley_Connect.getVolleyQueues().add(sendJSONArrayRequest);
     }
 
@@ -339,8 +343,8 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
             locationRequest = new LocationRequest();
 
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setFastestInterval(15000);
-            locationRequest.setInterval(20000);
+            locationRequest.setFastestInterval(1500000);
+            locationRequest.setInterval(1000000);
 
             fusedLocationProviderClient.requestLocationUpdates(locationRequest,mLocationCallback,getActivity().getMainLooper());
             //Toast.makeText(getActivity(), "test successfully in request!", Toast.LENGTH_SHORT).show();
@@ -356,6 +360,7 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
      */
     public void addChat(){
         chatListsInDB = PalaverDatabase.getInstance(getContext()).getChatDao().getChatListByName(friendName);
+        System.out.println("test in Fragment_chat: "+ chatListsInDB.size());
         if(chatAdapter == null) {
             chatAdapter = new ChatAdapter(getContext(), chatListsInDB,this);
             chatRecyclerView.setAdapter(chatAdapter);
@@ -363,7 +368,6 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
             chatAdapter.setAdapter_chat_list(chatListsInDB);
             chatAdapter.notifyDataSetChanged();
         }
-
         chatRecyclerView.scrollToPosition(chatListsInDB.size() - 1);
     }
 
@@ -496,6 +500,18 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
         }
     }
 
+    public void onDestroy(){
+        super.onDestroy();
+        getActivity().unregisterReceiver(chatBroadcastReceiver);
+    }
+
+
+    public void onStop() {
+        super.onStop();
+        Volley_Connect.getVolleyQueues().cancelAll("Send_Request");
+        Volley_Connect.getVolleyQueues().cancelAll("SendLocation_Request");
+        Volley_Connect.getVolleyQueues().cancelAll("SendImage_Request");
+    }
     @Override
     public void OnMapClick(int position) {
         String location = chatListsInDB.get(position).getMimeType();
