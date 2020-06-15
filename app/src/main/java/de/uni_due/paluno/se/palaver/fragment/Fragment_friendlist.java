@@ -77,18 +77,20 @@ public class Fragment_friendlist extends Fragment implements FriendListAdapter.O
 
         // set broadcast to update the list of friend
         IntentFilter filter = new IntentFilter("de.uni_due.paluno.se.palaver.broadcast_NEW_FRIEND");
-        BroadcastReceiver newFriendBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if(intent.getAction().equals("de.uni_due.paluno.se.palaver.broadcast_NEW_FRIEND")) {
-                    addUser();
-                }
-            }
-        };
         getActivity().registerReceiver(newFriendBroadcastReceiver,filter);
 
         return view;
     }
+
+    BroadcastReceiver newFriendBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //System.out.println("updateChat called in broadcast receive.!!!");
+            if(intent.getAction().equals("de.uni_due.paluno.se.palaver.broadcast_NEW_FRIEND")) {
+                addUser();
+            }
+        }
+    };
 
     /**
      * Check if the list of friends already exists
@@ -187,6 +189,10 @@ public class Fragment_friendlist extends Fragment implements FriendListAdapter.O
         addUser();
     }
 
+    public void onDestroy(){
+        super.onDestroy();
+        getActivity().unregisterReceiver(newFriendBroadcastReceiver);
+    }
     @Override
     public void onStop() {
         super.onStop();

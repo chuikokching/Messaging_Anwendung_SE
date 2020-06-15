@@ -89,7 +89,8 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
     @Override
     public void onResume() {
         super.onResume();
-        getChatListFromServer();
+        //getChatListFromServer();
+        //updateChatDB();
         addChat();
     }
 
@@ -214,6 +215,7 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
     BroadcastReceiver chatBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            //System.out.println("updateChat called in broadcast receive.!!!");
             if(intent.getAction().equals("de.uni_due.paluno.se.palaver.broadcast_NEW_MESSAGE")) {
                 updateChatDB();
             }
@@ -425,6 +427,8 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
     }
 
     public void updateChatDB() {
+
+
         final String username = loginUser_SP.getString("username", "");
         final String password = loginUser_SP.getString("password", "");
 
