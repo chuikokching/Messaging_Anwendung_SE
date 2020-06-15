@@ -7,10 +7,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,10 +48,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.uni_due.paluno.se.palaver.MainActivity;
+import de.uni_due.paluno.se.palaver.Map_Activity;
 import de.uni_due.paluno.se.palaver.R;
 import de.uni_due.paluno.se.palaver.Volley_Connect;
 import de.uni_due.paluno.se.palaver.adapter.ChatAdapter;
@@ -56,7 +64,7 @@ import de.uni_due.paluno.se.palaver.room.MimeTypeEnum;
 import de.uni_due.paluno.se.palaver.room.PalaverDatabase;
 import de.uni_due.paluno.se.palaver.room.SendTypeEnum;
 
-public class Fragment_chat extends Fragment {
+public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener {
     private TextView friendNameTextView;
     private String friendName;
     private ChatAdapter chatAdapter;
@@ -86,6 +94,33 @@ public class Fragment_chat extends Fragment {
         addChat();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==438)
+        {
+            Uri uri = data.getData();
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] bytes = baos.toByteArray();
+
+                //base64 encode
+                byte[] encode = Base64.encode(bytes,Base64.DEFAULT);
+                String encodeString = new String(encode);
+                System.out.println("test "+encodeString);
+                send_ImageMessage(encodeString);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -109,12 +144,15 @@ public class Fragment_chat extends Fragment {
 
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select an image"), 438);
             }
         });
 
-        locationSendButton.setOnClickListener(new View.OnClickListener(){
 
+        locationSendButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                     Permission_grant();
@@ -192,6 +230,43 @@ public class Fragment_chat extends Fragment {
         };
     };
 
+    public void send_ImageMessage(final String encode)
+    {
+        final String username = loginUser_SP.getString("username", "");
+        final String password = loginUser_SP.getString("password", "");
+        String sendUrl="http://palaver.se.paluno.uni-due.de/api/message/send";
+        HashMap<String,String> sendMap = new HashMap<>();
+        sendMap.put("Username", username);
+        sendMap.put("Password", password);
+        sendMap.put("Recipient", friendName);
+        sendMap.put("Mimetype", MimeTypeEnum.IMAGE_PIC.getMimeType());
+        sendMap.put("Data", encode);
+        JSONObject sendJSONObject = new JSONObject(sendMap);
+        JsonObjectRequest sendJSONArrayRequest = new JsonObjectRequest(Request.Method.POST, sendUrl, sendJSONObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if(response.getInt("MsgType") == 1) {
+                        String chatType = SendTypeEnum.TYPE_SEND.getSendType();
+                        String dateTime = response.getJSONObject("Data").getString("DateTime");
+                        Chat newChat = new Chat(friendName, MimeTypeEnum.IMAGE_PIC.getMimeType(), encode, dateTime, chatType);
+                        PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
+                        //chatInputText.setText("");
+                        addChat();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        Volley_Connect.getVolleyQueues().add(sendJSONArrayRequest);
+    }
+
     public void send_locationMessage(String lat,String lng)
     {
         final String coordinate=lat+","+lng;
@@ -214,7 +289,7 @@ public class Fragment_chat extends Fragment {
                         String dateTime = response.getJSONObject("Data").getString("DateTime");
                         Chat newChat = new Chat(friendName, MimeTypeEnum.TEXT_COOR.getMimeType(), coordinate, dateTime, chatType);
                         PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
-                        chatInputText.setText("");
+                        //chatInputText.setText("");
                         addChat();
                     }
                 } catch (JSONException e) {
@@ -243,6 +318,9 @@ public class Fragment_chat extends Fragment {
             public void onGranted() {
                 //permission approved
                 LocationUpdate();
+                //Intent test2 = new Intent(Fragment_chat.this.getActivity(), Map_Activity.class);
+               // Fragment_chat.this.startActivity(test2);
+                //Fragment_chat.this.getActivity().finish();
             }
             @Override
             public void onDenied(Context context, ArrayList<String> deniedPermissions) {
@@ -279,7 +357,7 @@ public class Fragment_chat extends Fragment {
     public void addChat(){
         chatListsInDB = PalaverDatabase.getInstance(getContext()).getChatDao().getChatListByName(friendName);
         if(chatAdapter == null) {
-            chatAdapter = new ChatAdapter(getContext(), chatListsInDB);
+            chatAdapter = new ChatAdapter(getContext(), chatListsInDB,this);
             chatRecyclerView.setAdapter(chatAdapter);
         } else {
             chatAdapter.setAdapter_chat_list(chatListsInDB);
@@ -418,4 +496,18 @@ public class Fragment_chat extends Fragment {
         }
     }
 
+    @Override
+    public void OnMapClick(int position) {
+        String location = chatListsInDB.get(position).getMimeType();
+        //System.out.println("test in chat - "+ location);
+        String coordinates[] = chatListsInDB.get(position).getData().split(",");
+        if(location.equals(MimeTypeEnum.TEXT_COOR.getMimeType()))
+        {
+            Intent  intent2 = new Intent(Fragment_chat.this.getActivity(), Map_Activity.class);
+            intent2.putExtra("lat",coordinates[0]);
+            intent2.putExtra("lng",coordinates[1]);
+            Fragment_chat.this.startActivity(intent2);
+            Fragment_chat.this.getActivity().finish();
+        }
+    }
 }

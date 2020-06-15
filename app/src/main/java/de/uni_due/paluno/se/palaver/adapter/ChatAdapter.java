@@ -1,6 +1,9 @@
 package de.uni_due.paluno.se.palaver.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +24,12 @@ import de.uni_due.paluno.se.palaver.room.SendTypeEnum;
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private Context context;
     private List<Chat> adapter_chat_list;
+    private OnMapListener mOnMapListener;
 
-    public ChatAdapter(Context context, List<Chat> chatList) {
+    public ChatAdapter(Context context, List<Chat> chatList,OnMapListener onMapListener) {
         this.context = context;
         this.adapter_chat_list = chatList;
+        this.mOnMapListener=onMapListener;
     }
 
     public void setAdapter_chat_list(List<Chat> adapter_chat_list) {
@@ -35,7 +40,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.chat_item,parent,false);
-        return new ViewHolder(view);
+        return new ViewHolder(view,mOnMapListener);
     }
 
     @Override
@@ -65,6 +70,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 holder.locationLayoutRight.setVisibility(View.GONE);
                 holder.picLayoutLeft.setVisibility(View.VISIBLE);
                 holder.picLayoutRight.setVisibility(View.GONE);
+                byte[] decodedString = Base64.decode(chat.getData(), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                holder.picImageViewLeft.setImageBitmap(decodedByte);
                 //holder.picImageViewLeft);
             }
         } else if(chat.getSendType().equals(SendTypeEnum.TYPE_SEND.getSendType())) {
@@ -91,9 +99,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 holder.locationLayoutRight.setVisibility(View.GONE);
                 holder.picLayoutLeft.setVisibility(View.GONE);
                 holder.picLayoutRight.setVisibility(View.VISIBLE);
-                //holder.picImageViewRight;
+                byte[] decodedString = Base64.decode(chat.getData(), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                holder.picImageViewRight.setImageBitmap(decodedByte);
             }
         }
+    }
+
+    public interface OnMapListener{
+        void OnMapClick(int position);
     }
 
     @Override
@@ -101,7 +115,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return adapter_chat_list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private LinearLayout textLayoutLeft;
         private LinearLayout textLayoutRight;
 
@@ -119,9 +133,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         private ImageView picImageViewLeft;
         private ImageView picImageViewRight;
+        OnMapListener onMapListener;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView,OnMapListener onMapListener) {
             super(itemView);
+            this.onMapListener = onMapListener;
             textLayoutLeft = itemView.findViewById(R.id.text_layout_left);
             textLayoutRight = itemView.findViewById(R.id.text_layout_right);
 
@@ -139,6 +155,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
             picImageViewLeft = itemView.findViewById(R.id.chat_pic_left);
             picImageViewRight = itemView.findViewById(R.id.chat_pic_right);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            onMapListener.OnMapClick(getAdapterPosition());
         }
     }
 }
