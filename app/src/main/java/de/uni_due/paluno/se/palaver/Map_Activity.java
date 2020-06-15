@@ -1,11 +1,15 @@
 package de.uni_due.paluno.se.palaver;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toolbar;
 
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
@@ -37,8 +41,9 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
     Intent intent;
     public String lat="",lng="";
     private MapView mapView;
-    private MapboxMap map;
 
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,15 +57,22 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        Toolbar toolbar1= (Toolbar) findViewById(R.id.toolbar1);
+        toolbar1.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+       // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar1.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
 
         LatLng latLng = new LatLng(Double.valueOf(lat), Double.valueOf(lng));
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(latLng.getLatitude(), latLng.getLongitude()))
-                .build();
         mapboxMap.animateCamera(CameraUpdateFactory.newLatLng(latLng),2000);
 
         List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
