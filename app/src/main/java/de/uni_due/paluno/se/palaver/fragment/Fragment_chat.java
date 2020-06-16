@@ -6,11 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -208,16 +204,15 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
         IntentFilter filter = new IntentFilter("de.uni_due.paluno.se.palaver.broadcast_NEW_MESSAGE");
         getActivity().registerReceiver(chatBroadcastReceiver,filter);
 
-
         return chatView;
     }
 
+    // Broadcast to update the list of chats
     BroadcastReceiver chatBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //System.out.println("updateChat called in broadcast receive.!!!");
             if(intent.getAction().equals("de.uni_due.paluno.se.palaver.broadcast_NEW_MESSAGE")) {
-                updateChatDB();
+                addChat();
             }
         }
     };
@@ -349,7 +344,6 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
             locationRequest.setInterval(1000000);
 
             fusedLocationProviderClient.requestLocationUpdates(locationRequest,mLocationCallback,getActivity().getMainLooper());
-            //Toast.makeText(getActivity(), "test successfully in request!", Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -362,7 +356,6 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
      */
     public void addChat(){
         chatListsInDB = PalaverDatabase.getInstance(getContext()).getChatDao().getChatListByName(friendName);
-        System.out.println("test in Fragment_chat: "+ chatListsInDB.size());
         if(chatAdapter == null) {
             chatAdapter = new ChatAdapter(getContext(), chatListsInDB,this);
             chatRecyclerView.setAdapter(chatAdapter);
@@ -393,24 +386,22 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
                         JSONArray messages = response.getJSONArray("Data");
                         if(PalaverDatabase.getInstance(getContext()).getChatDao().getChatListByName(friendName).size() != 0) {
                             PalaverDatabase.getInstance(getContext()).getChatDao().deleteChatsAboutOneFriend(friendName);
-                        } else {
-                            for (int i = 0 ; i < messages.length() ; i++) {
-                                JSONObject message = (JSONObject) messages.get(i);
-                                String sender = message.getString("Sender");
-                                String recipient = message.getString("Recipient");
-                                String mimeType = message.getString("Mimetype");
-                                String data = message.getString("Data");
-                                String dateTime = message.getString("DateTime");
-                                if(sender.equals(username)) {
-                                    Chat newChat = new Chat(recipient, mimeType, data, dateTime, SendTypeEnum.TYPE_SEND.getSendType());
-                                    PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
-                                } else {
-                                    Chat newChat = new Chat(sender, mimeType, data, dateTime, SendTypeEnum.TYPE_RECEIVE.getSendType());
-                                    PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
-                                }
-                                //Toast.makeText(getActivity(),"Update Chat Successfully",Toast.LENGTH_SHORT).show();
-                                addChat();
+                        }
+                        for (int i = 0 ; i < messages.length() ; i++) {
+                            JSONObject message = (JSONObject) messages.get(i);
+                            String sender = message.getString("Sender");
+                            String recipient = message.getString("Recipient");
+                            String mimeType = message.getString("Mimetype");
+                            String data = message.getString("Data");
+                            String dateTime = message.getString("DateTime");
+                            if(sender.equals(username)) {
+                                Chat newChat = new Chat(recipient, mimeType, data, dateTime, SendTypeEnum.TYPE_SEND.getSendType());
+                                PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
+                            } else {
+                                Chat newChat = new Chat(sender, mimeType, data, dateTime, SendTypeEnum.TYPE_RECEIVE.getSendType());
+                                PalaverDatabase.getInstance(getContext()).getChatDao().addChat(newChat);
                             }
+                            addChat();
                         }
                     }
                 } catch (JSONException e) {
@@ -427,8 +418,6 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
     }
 
     public void updateChatDB() {
-
-
         final String username = loginUser_SP.getString("username", "");
         final String password = loginUser_SP.getString("password", "");
 
