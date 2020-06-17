@@ -32,6 +32,9 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
     private LinearLayout linear_list;
     private LinearLayout linear_setting;
 
+    private boolean dualPaneMode;
+    private FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +58,6 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
         //initial
         image_list.setImageResource(R.drawable.person_green);
         tv_list.setTextColor(getResources().getColor(R.color.colorAccent));
-
     }
 
     //HideAllfragment
@@ -72,6 +74,13 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
 
     public void Init_Fragment(int index)
     {
+        fragmentManager = getSupportFragmentManager();
+        if (findViewById(R.id.chat_container) != null) {
+            dualPaneMode = true;
+        } else {
+            dualPaneMode = false;
+        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         //transaction start
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -82,7 +91,7 @@ public class User_Interface_Activity extends AppCompatActivity implements View.O
 
             case 2:
                 if (frag_list == null){
-                    frag_list = new Fragment_friendlist();
+                    frag_list = Fragment_friendlist.newInstance(dualPaneMode);
                     transaction.add(R.id.frame_content,frag_list);
                 }
                 else{

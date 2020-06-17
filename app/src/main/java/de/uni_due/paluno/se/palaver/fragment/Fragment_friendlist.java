@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,9 +48,26 @@ public class Fragment_friendlist extends Fragment implements FriendListAdapter.O
 
     SharedPreferences loginUser_SP;
 
+    private boolean dualPaneMode;
+
+    public static Fragment_friendlist newInstance(boolean dualPaneMode) {
+        Fragment_friendlist fragmentFriendlist = new Fragment_friendlist();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("dualPane", dualPaneMode);
+        fragmentFriendlist.setArguments(bundle);
+        return fragmentFriendlist;
+    }
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.dualPaneMode = getArguments().getBoolean("dualPane");
     }
 
     @Override
@@ -222,10 +240,14 @@ public class Fragment_friendlist extends Fragment implements FriendListAdapter.O
 
     @Override
     public void onFriendClick(int position) {
-        friendListsInAdapter.get(position);
         String friendName = friendListsInAdapter.get(position).getNickname();
-        Intent chatIntent = new Intent(getContext(), Chat_Activity.class);
-        chatIntent.putExtra("friendName", friendName);
-        startActivity(chatIntent);
+        if(this.dualPaneMode == false) {
+            Intent chatIntent = new Intent(getContext(), Chat_Activity.class);
+            chatIntent.putExtra("friendName", friendName);
+            startActivity(chatIntent);
+        } else {
+            Fragment_chat chatFragment = Fragment_chat.newInstance(friendName);
+            getFragmentManager().beginTransaction().replace(R.id.chat_container, chatFragment).commit();
+        }
     }
 }

@@ -71,6 +71,15 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
+
+    public static Fragment_chat newInstance(String friendName) {
+        Fragment_chat fragmentChat = new Fragment_chat();
+        Bundle bundle = new Bundle();
+        bundle.putString("name_of_friend", friendName);
+        fragmentChat.setArguments(bundle);
+        return fragmentChat;
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -79,7 +88,7 @@ public class Fragment_chat extends Fragment implements ChatAdapter.OnMapListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        friendName = getArguments().getString("name_of_friend");
+        this.friendName = getArguments().getString("name_of_friend");
     }
 
     @Override
